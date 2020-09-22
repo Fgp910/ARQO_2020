@@ -1,7 +1,7 @@
 --------------------------------------------------------------------------------
 -- Unidad de control principal del micro. Arq0 2020-2021
 --
--- (INCLUIR AQUI LA INFORMACION SOBRE LOS AUTORES)
+-- Grupo 1301_08: Leandro Garcia y Fabian Gutierrez.
 --
 --------------------------------------------------------------------------------
 
@@ -14,7 +14,7 @@ entity control_unit is
       -- Entrada = codigo de operacion en la instruccion:
       OpCode  : in  std_logic_vector (5 downto 0);
       -- Seniales para el PC
-      Branch : out  std_logic; -- 1 = Ejecutandose instruccion branch
+      Branch : out  std_logic;   -- 1 = Ejecutandose instruccion branch
       -- Seniales relativas a la memoria
       MemToReg : out  std_logic; -- 1 = Escribir en registro la salida de la mem.
       MemWrite : out  std_logic; -- Escribir la memoria
@@ -37,7 +37,7 @@ architecture rtl of control_unit is
    constant OP_SW     : t_opCode := "101011";
    constant OP_LW     : t_opCode := "100011";
    constant OP_LUI    : t_opCode := "001111";
-   -- constant OP_J      : t_opCode := "000010";
+   constant OP_J      : t_opCode := "000010";
    constant OP_ADDI   : t_opCode := "001000";
    constant OP_SLTI   : t_opCode := "001010";
 
@@ -55,10 +55,10 @@ RegDst   <= '1' when opCode = OP_RTYPE else -- R-type
 
 RegWrite <= '0' when opCode = OP_SW  else -- sw
             '0' when opCode = OP_BEQ else -- bew
---            '0' when opCode = "000010" else -- j
+            '0' when opCode = OP_J   else -- j
             '1'; -- R-type, lw, I-type, jal
 
-MemRead  <= '1' when opCode = OP_LW else --lw
+MemRead  <= '1' when opCode = OP_LW else -- lw
             '0';
 
 MemWrite <= '1' when opCode = OP_SW else -- sw
@@ -67,15 +67,15 @@ MemWrite <= '1' when opCode = OP_SW else -- sw
 MemToReg <= '1' when opCode = OP_LW else -- lw
             '0'; -- R-type, sw, beq, j, jal, I-type
 
-ALUOP    <= "000" when opCode = OP_LW  else -- lw
-            "000" when opCode = OP_SW  else -- sw
-            "000" when opCode = OP_ADDI else --addi
-            "001" when opCode = OP_BEQ else -- beq
-            "011" when opCode = OP_LUI else --lui
-            "111" when opCode = OP_SLTI else --slti
+ALUOP    <= "000" when opCode = OP_LW   else -- lw
+            "000" when opCode = OP_SW   else -- sw
+            "000" when opCode = OP_ADDI else -- addi
+            "001" when opCode = OP_BEQ  else -- beq
+            "011" when opCode = OP_LUI  else -- lui
+            "111" when opCode = OP_SLTI else -- slti
             "010"; -- r-type;
 
-          -- Jump <= '1' when opCode = "000010" else -- j
-          --         '1' when opCode = "000011" else --jal
-          --         '0';
+Jump     <= '1' when opCode = "000010" else -- j
+            '1' when opCode = "000011" else --jal
+            '0';
 end architecture;

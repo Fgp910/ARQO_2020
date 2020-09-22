@@ -1,7 +1,7 @@
 --------------------------------------------------------------------------------
 -- Procesador MIPS con pipeline curso Arquitectura 2020-2021
 --
--- (INCLUIR AQUI LA INFORMACION SOBRE LOS AUTORES)
+-- Grupo 1301_08: Leandro Garcia y Fabian Gutierrez.
 --
 --------------------------------------------------------------------------------
 
@@ -140,7 +140,7 @@ begin
   port map(
     OpCode   => Instruction(31 downto 26),
     -- Señales para el PC
-    --Jump   => CONTROL_JUMP,
+    Jump     => Ctrl_Jump,
     Branch   => Ctrl_Branch,
     -- Señales para la memoria
     MemToReg => Ctrl_MemToReg,
@@ -157,13 +157,11 @@ begin
   Inm_ext        <= x"FFFF" & Instruction(15 downto 0) when Instruction(15)='1' else
                     x"0000" & Instruction(15 downto 0);
   Addr_Jump      <= PC_plus4(31 downto 28) & Instruction(25 downto 0) & "00";
-  Addr_Branch    <= PC_plus4 + ( Inm_ext(29 downto 0) & "00");
-
-  Ctrl_Jump      <= '0'; --nunca salto incondicional
+  Addr_Branch    <= PC_plus4 + (Inm_ext(29 downto 0) & "00");
 
   Regs_eq_branch <= '1' when (reg_RS = reg_RT) else '0';
   desition_Jump  <= Ctrl_Jump or (Ctrl_Branch and Regs_eq_branch);
-  Addr_Jump_dest <= Addr_Jump   when Ctrl_Jump='1' else
+  Addr_Jump_dest <= Addr_Jump   when Ctrl_Jump='1'   else
                     Addr_Branch when Ctrl_Branch='1' else
                     (others =>'0');
 

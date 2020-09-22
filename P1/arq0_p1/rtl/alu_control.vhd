@@ -1,7 +1,7 @@
 --------------------------------------------------------------------------------
 -- Bloque de control para la ALU. Arq0 2019-2020.
 --
--- (INCLUIR AQUI LA INFORMACION SOBRE LOS AUTORES, Quitar este mensaje)
+-- Grupo 1301_08: Leandro Garcia y Fabian Gutierrez.
 --
 --------------------------------------------------------------------------------
 
