@@ -103,7 +103,7 @@ architecture rtl of processor is
 
   signal Addr_Jump      : std_logic_vector(31 downto 0);
   signal Addr_Jump_dest : std_logic_vector(31 downto 0);
-  signal desition_Jump     : std_logic;
+  signal desition_Jump  : std_logic;
   signal Alu_Res        : std_logic_vector(31 downto 0);
 
 begin
