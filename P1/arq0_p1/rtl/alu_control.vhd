@@ -34,13 +34,15 @@ architecture rtl of alu_control is
 
 begin
 
-  AluControl <= ALU_ADD when AluOp = "000" else -- lw o sw, que hace una suma
+  AluControl <= ALU_ADD when AluOp = "000" else -- addi, lw o sw, que hace una suma
                 ALU_S16 when AluOp = "011" else -- lui,
+                ALU_SLT when AluOp = "111" else -- slti
                 ALU_ADD when AluOp = "010" and Funct = "100000" else -- add
                 ALU_SUB when AluOp = "010" and Funct = "100010" else -- sub
                 ALU_AND when AluOp = "010" and Funct = "100100" else -- and
                 ALU_OR  when AluOp = "010" and Funct = "100101" else -- or
                 ALU_SLT when AluOp = "010" and Funct = "101010" else -- slt
+                ALU_XOR when AluOp = "010" and Funct = "100110" else -- xor
                 ALU_NOT;-- when AluOp_IDEX = "10" and Inm_ext_IDEX(5 downto 0) = "100110"; -- xor
 
 end architecture;

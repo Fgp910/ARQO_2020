@@ -37,6 +37,9 @@ architecture rtl of control_unit is
    constant OP_SW     : t_opCode := "101011";
    constant OP_LW     : t_opCode := "100011";
    constant OP_LUI    : t_opCode := "001111";
+   -- constant OP_J      : t_opCode := "000010";
+   constant OP_ADDI   : t_opCode := "001000";
+   constant OP_SLTI   : t_opCode := "001010";
 
 begin
 --   OPCode <= Instr(31 downto 26);
@@ -66,8 +69,10 @@ MemToReg <= '1' when opCode = OP_LW else -- lw
 
 ALUOP    <= "000" when opCode = OP_LW  else -- lw
             "000" when opCode = OP_SW  else -- sw
+            "000" when opCode = OP_ADDI else --addi
             "001" when opCode = OP_BEQ else -- beq
             "011" when opCode = OP_LUI else --lui
+            "111" when opCode = OP_SLTI else --slti
             "010"; -- r-type;
 
           -- Jump <= '1' when opCode = "000010" else -- j
