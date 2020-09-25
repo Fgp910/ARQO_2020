@@ -48,12 +48,6 @@ main:
   or $s6, $s0, $t2  # or $r22, $r16, $r10  -> r22=r16 or r10  = 14
   slt $s7, $t1, $t2 # slt $r23, $r9, $r10  -> r23=1 si r9 < r10 else 0  = 1
   slt $t8, $s0, $t2 # slt $r24, $r16, $r10 -> r24=1 si r16 < r10 else 0 = 0
-
-  # se añaden las nuevas instrucciones I-type
-  addi $s0, $s6, 6  # addi $r16, $r22, 6  -> r22 + 6 = 20
-  addi $s1, $s0, -2 # addi $r17, $r16, -2 -> r16 - 2 = 18
-  slti $s2, $s1, 2  # slti $r18, $r17, 2  -> r17 < 2 => 0
-  slti $s3, $s2, 30 # slti $r19, $r18, 30 -> r18 < 30 => 1
   
   # carga datos inmediatos en la parte alta de registros
   lui $t1, 1 # lui $r9, 1  -> queda a 65536  (0x00010000)
@@ -71,22 +65,6 @@ main:
 salto:
   sub $t4, $s0, $t7     # sub $r12, $r16, $r15    -> r12 = 9
   beq $s3, $s4, nosalto # beq $r19, $r20, nosalto -> este branch NO debe ejecutarse
-
-  # se añaden varios NOPs para probar que no ocurre nada
-  nop
-  nop
-  nop
-  nop
-  nop
-
-  # se añade un salto incondicional que omite varios NOPs (comprobar que solo se ejecuten 5)
-  j final
-  nop
-  nop
-  nop
-  nop
-  nop
-
 final:
   beq $zero, $zero, final # -> bucle infinito, volvera aqui tras varios NOPs.
   nop
