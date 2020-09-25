@@ -15,6 +15,7 @@ entity control_unit is
       OpCode  : in  std_logic_vector (5 downto 0);
       -- Seniales para el PC
       Branch : out  std_logic;   -- 1 = Ejecutandose instruccion branch
+      Jump   : out std_logic;    -- 1 = Ejecutandose salto incondicional
       -- Seniales relativas a la memoria
       MemToReg : out  std_logic; -- 1 = Escribir en registro la salida de la mem.
       MemWrite : out  std_logic; -- Escribir la memoria
@@ -75,7 +76,6 @@ ALUOP    <= "000" when opCode = OP_LW   else -- lw
             "111" when opCode = OP_SLTI else -- slti
             "010"; -- r-type;
 
-Jump     <= '1' when opCode = "000010" else -- j
-            '1' when opCode = "000011" else --jal
+Jump     <= '1' when opCode = OP_J else -- j
             '0';
 end architecture;
