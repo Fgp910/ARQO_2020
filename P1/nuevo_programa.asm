@@ -51,7 +51,7 @@ main:
 
   # se añaden las nuevas instrucciones I-type
   addi $t0, $s6, 6  # addi $r8, $r22, 6  -> r8=r22+6    = 20
-  addi $t0, $s0, -2 # addi $r8, $r16, -2 -> r8=r16-2    = 18
+  addi $t0, $s0, -2 # addi $r8, $r16, -2 -> r8=r16-2    = 10
   slti $t0, $s1, 2  # slti $r8, $r17, 2  -> r8=1 si r17 < 2 else 0 = 0
   slti $t0, $s2, 30 # slti $r8, $r18, 30 -> r8=1 si r18 < 2 else 0 = 1
 

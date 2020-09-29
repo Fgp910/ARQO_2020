@@ -35,7 +35,7 @@ main:
   lw $t4, 36($zero) # lw $r12, 36($r0) -> r12 no cambia
   lw $t5, 40($zero) # lw $r13, 40($r0) -> r13 no cambia
   lw $t6, 44($zero) # lw $r14, 44($r0) -> r14 no cambia
-  
+
   # realiza operaciones
   add $t7, $t1, $t2 # add $r15, $r9, $r10  -> r15=r9+r10      = 3
   add $s0, $t3, $t4 # add $r16, $r11, $r12 -> r16=r11+r12     = 12
@@ -50,15 +50,15 @@ main:
   slt $t8, $s0, $t2 # slt $r24, $r16, $r10 -> r24=1 si r16 < r10 else 0 = 0
 
   # se añaden las nuevas instrucciones I-type
-  addi $s0, $s6, 6  # addi $r16, $r22, 6  -> r22 + 6 = 20
-  addi $s1, $s0, -2 # addi $r17, $r16, -2 -> r16 - 2 = 18
-  slti $s2, $s1, 2  # slti $r18, $r17, 2  -> r17 < 2 => 0
-  slti $s3, $s2, 30 # slti $r19, $r18, 30 -> r18 < 30 => 1
-  
+  addi $t0, $s6, 6  # addi $r8, $r22, 6  -> r8=r22+6    = 20
+  addi $t0, $s0, -2 # addi $r8, $r16, -2 -> r8=r16-2    = 18
+  slti $t0, $s1, 2  # slti $r8, $r17, 2  -> r8=1 si r17 < 2 else 0 = 0
+  slti $t0, $s2, 30 # slti $r8, $r18, 30 -> r8=1 si r18 < 2 else 0 = 1
+
   # carga datos inmediatos en la parte alta de registros
   lui $t1, 1 # lui $r9, 1  -> queda a 65536  (0x00010000)
   lui $t2, 2 # lui $r10, 2 -> queda a 131072 (0x00020000)
-  
+
   # salto condicional: solo comprobamos por ahora que salte o no y la direccion 
   # de salto, pero el procesador ejecutara incorrectamente varias de las 
   # instrucciones tras el beq:
