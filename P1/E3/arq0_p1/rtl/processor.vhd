@@ -90,19 +90,26 @@ architecture rtl of processor is
   signal Regs_eq_branch : std_logic;
   signal PC_next        : std_logic_vector(31 downto 0);
   signal PC_reg         : std_logic_vector(31 downto 0);
-  signal PC_plus4_IF      : std_logic_vector(31 downto 0);
-  signal PC_plus4_ID      : std_logic_vector(31 downto 0);
+  signal PC_plus4_IF    : std_logic_vector(31 downto 0);
+  signal PC_plus4_ID    : std_logic_vector(31 downto 0);
 
-  signal Instruction_IF    : std_logic_vector(31 downto 0); -- La instrucción desde lamem de instr
-  signal Instruction_ID    : std_logic_vector(31 downto 0);
-  signal Inm_ext        : std_logic_vector(31 downto 0); --Lparte baja de la instrucción extendida de signo
+  signal Instruction_IF : std_logic_vector(31 downto 0); -- La instrucción desde lamem de instr
+  signal Instruction_ID : std_logic_vector(31 downto 0);
+  signal Inm_ext_ID     : std_logic_vector(31 downto 0); -- La parte baja de la instrucción extendida de signo
+  signal Dir_reg_RT_ID, Dir_reg_RD_ID : std_logic_vector(5 downto 0);
+  signal Dir_reg_RT_EX, Dir_reg_RD_EX : std_logic_vector(5 downto 0);
   signal reg_RS, reg_RT : std_logic_vector(31 downto 0);
 
   signal dataIn_Mem     : std_logic_vector(31 downto 0); --From Data Memory
   signal Addr_Branch    : std_logic_vector(31 downto 0);
 
-  signal Ctrl_Jump, Ctrl_Branch, Ctrl_MemWrite, Ctrl_MemRead,  Ctrl_ALUSrc, Ctrl_RegDest, Ctrl_MemToReg, Ctrl_RegWrite : std_logic;
-  signal Ctrl_ALUOP     : std_logic_vector(2 downto 0);
+  signal Ctrl_Jump, Ctrl_Branch_ID, Ctrl_MemWrite_ID, Ctrl_MemRead_ID,
+  Ctrl_ALUSrc_ID, Ctrl_RegDest_ID, Ctrl_MemToReg_ID, Ctrl_RegWrite_ID : std_logic;
+  signal Ctrl_ALUOP_ID  : std_logic_vector(2 downto 0);
+
+  signal Ctrl_Branch_EX, Ctrl_MemWrite_EX, Ctrl_MemRead_EX,
+  Ctrl_ALUSrc_EX, Ctrl_RegDest_EX, Ctrl_MemToReg_EX, Ctrl_RegWrite_EX : std_logic;
+  signal Ctrl_ALUOP_EX  : std_logic_vector(2 downto 0);
 
   signal Addr_Jump      : std_logic_vector(31 downto 0);
   signal Addr_Jump_dest : std_logic_vector(31 downto 0);
@@ -116,7 +123,7 @@ architecture rtl of processor is
 
 begin
 
-  PC_next <= Addr_Jump_dest when desition_Jump = '1' else PC_plus4;
+  PC_next <= Addr_Jump_dest when desition_Jump = '1' else PC_plus4_IF;
 
   PC_reg_proc: process(Clk, Reset)
   begin
@@ -128,7 +135,7 @@ begin
   end process;
 
   PC_plus4_IF    <= PC_reg + 4;
-  IAddr       <= PC_reg;
+  IAddr          <= PC_reg;
   Instruction_IF <= IDataIn;
 
   IF_ID_reg: process(Clk, Reset)
@@ -159,7 +166,7 @@ begin
   port map(
     OpCode   => Instruction_ID(31 downto 26),
     -- Señales para el PC
-    Jump     => Ctrl_Jump_ID,
+    Jump     => Ctrl_Jump,
     Branch   => Ctrl_Branch_ID,
     -- Señales para la memoria
     MemToReg => Ctrl_MemToReg_ID,
@@ -173,25 +180,32 @@ begin
     RegDst   => Ctrl_RegDest_ID
   );
 
-  Inm_ext        <= x"FFFF" & Instruction(15 downto 0) when Instruction(15)='1' else
-                    x"0000" & Instruction(15 downto 0);
+  Inm_ext_ID <= x"FFFF" & Instruction(15 downto 0) when Instruction(15)='1' else
+                x"0000" & Instruction(15 downto 0);
 
   ID_EX_reg: process(Clk, Reset)
   begin
     if Reset = '1' then
       Ctrl_RegWrite_EX <= '0';
       Ctrl_MemToReg_EX <= '0';
-      Ctrl_Branch_EX <= '0';
-      Ctrl_MemRead_EX <= '0';
+      Ctrl_Branch_EX   <= '0';
+      Ctrl_MemRead_EX  <= '0';
       Ctrl_MemWrite_EX <= '0';
-      Ctrl_RegDest_EX <= '0';
-      Ctrl_ALUOP_EX <= (others <= '0');
-      Ctrl_ALUSrc_EX <= '0';
-      PC_plus4_EX <= (others <= '0');
+      Ctrl_RegDest_EX  <= '0';
+      Ctrl_ALUOP_EX    <= (others <= '0');
+      Ctrl_ALUSrc_EX   <= '0';
+      PC_plus4_EX      <= (others <= '0');
 
     elsif rising_edge(Clk) and enable_IF_ID = '1' then
-      PC_plus4_ID <= PC_plus4_IF;
-      Intruction_ID <= Intruction_IF;
+      Ctrl_RegWrite_EX <= Ctrl_RegWrite_ID;
+      Ctrl_MemToReg_EX <= Ctrl_MemToReg_ID;
+      Ctrl_Branch_EX   <= Ctrl_Branch_ID;
+      Ctrl_MemRead_EX  <= Ctrl_MemRead_ID;
+      Ctrl_MemWrite_EX <= Ctrl_MemWrite_ID;
+      Ctrl_RegDest_EX  <= Ctrl_RegDest_ID;
+      Ctrl_ALUOP_EX    <= Ctrl_ALUOP_ID;
+      Ctrl_ALUSrc_EX   <= Ctrl_ALUSrc_ID;
+      PC_plus4_EX      <= PC_plus4_ID;
     end if;
   end process;
 
