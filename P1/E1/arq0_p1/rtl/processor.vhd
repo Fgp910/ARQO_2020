@@ -1,5 +1,5 @@
 --------------------------------------------------------------------------------
--- Procesador MIPS con pipeline curso Arquitectura 2020-2021
+-- Procesador MIPS sin pipeline curso Arquitectura 2020-2021
 --
 -- Grupo 1301_08: Leandro Garcia y Fabian Gutierrez.
 --
