@@ -98,7 +98,8 @@ architecture rtl of processor is
   signal Inm_ext_ID     : std_logic_vector(31 downto 0); -- La parte baja de la instrucción extendida de signo
   signal Dir_reg_RT_ID, Dir_reg_RD_ID : std_logic_vector(5 downto 0);
   signal Dir_reg_RT_EX, Dir_reg_RD_EX : std_logic_vector(5 downto 0);
-  signal reg_RS, reg_RT : std_logic_vector(31 downto 0);
+  signal reg_RS_ID, reg_RT_ID         : std_logic_vector(31 downto 0);
+  signal reg_RS_EX, reg_RT_EX         : std_logic_vector(31 downto 0);
 
   signal dataIn_Mem     : std_logic_vector(31 downto 0); --From Data Memory
   signal Addr_Branch    : std_logic_vector(31 downto 0);
@@ -154,9 +155,9 @@ begin
     Clk   => Clk,
     Reset => Reset,
     A1    => Instruction_ID(25 downto 21),
-    Rd1   => reg_RS,
+    Rd1   => reg_RS_ID,
     A2    => Instruction_ID(20 downto 16),
-    Rd2   => reg_RT,
+    Rd2   => reg_RT_ID,
     A3    => reg_RD,
     Wd3   => reg_RD_data,
     We3   => Ctrl_RegWrite
@@ -182,6 +183,8 @@ begin
 
   Inm_ext_ID <= x"FFFF" & Instruction(15 downto 0) when Instruction(15)='1' else
                 x"0000" & Instruction(15 downto 0);
+  Dir_reg_RT_ID <= Instruction(20 downto 16);
+  Dir_reg_RD_ID <= Instruction(15 downto 0);
 
   ID_EX_reg: process(Clk, Reset)
   begin
@@ -195,7 +198,11 @@ begin
       Ctrl_ALUOP_EX    <= (others <= '0');
       Ctrl_ALUSrc_EX   <= '0';
       PC_plus4_EX      <= (others <= '0');
-
+      reg_RS_EX        <= (others <= '0');
+      reg_RT_EX        <= (others <= '0');
+      Inm_ext_EX       <= (others <= '0');
+      Dir_reg_RT_EX    <= (others <= '0');
+      Dir_reg_RD_EX    <= (others <= '0');
     elsif rising_edge(Clk) and enable_IF_ID = '1' then
       Ctrl_RegWrite_EX <= Ctrl_RegWrite_ID;
       Ctrl_MemToReg_EX <= Ctrl_MemToReg_ID;
@@ -206,6 +213,11 @@ begin
       Ctrl_ALUOP_EX    <= Ctrl_ALUOP_ID;
       Ctrl_ALUSrc_EX   <= Ctrl_ALUSrc_ID;
       PC_plus4_EX      <= PC_plus4_ID;
+      reg_RS_EX        <= reg_RS_ID;
+      reg_RT_EX        <= reg_RT_ID;
+      Inm_ext_EX       <= Inm_ext_ID;
+      Dir_reg_RT_EX    <= Dir_reg_RT_ID;
+      Dir_reg_RD_EX    <= Dir_reg_RD_ID;
     end if;
   end process;
 
