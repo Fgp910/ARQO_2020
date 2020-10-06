@@ -82,7 +82,7 @@ architecture rtl of processor is
  end component alu_control;
 
   signal Alu_Op2      : std_logic_vector(31 downto 0);
-  signal ALU_IGUAL_EX, ALU_IGUAL_MEM    : std_logic;
+  signal ALU_Igual_EX, ALU_Igual_MEM    : std_logic;
   signal AluControl   : std_logic_vector(3 downto 0);
   signal reg_RD_data  : std_logic_vector(31 downto 0);
   signal reg_RD_EX, reg_RD_MEM , reg_RD_WB      : std_logic_vector(4 downto 0);
@@ -190,6 +190,7 @@ begin
                 x"0000" & Instruction_ID(15 downto 0);
   Dir_reg_RT_ID <= Instruction_ID(20 downto 16);
   Dir_reg_RD_ID <= Instruction_ID(15 downto 11);
+  Addr_Jump     <= PC_plus4(31 downto 28) & Instruction(25 downto 0) & "00";
 
   ID_EX_reg: process(Clk, Reset)
   begin
@@ -230,9 +231,9 @@ begin
 
   --Regs_eq_branch <= '1' when (reg_RS = reg_RT) else '0';
   --desition_Jump  <= Ctrl_Jump or (Ctrl_Branch and Regs_eq_branch);
-  --Addr_Jump_dest <= Addr_Jump   when Ctrl_Jump='1'   else
+  Addr_Jump_dest <= Addr_Jump   when Ctrl_Jump='1'   else
                     --Addr_Branch when Ctrl_Branch='1' else
-                    --(others =>'0');
+                    (others =>'0');
 
   Alu_control_i: alu_control
   port map(
@@ -249,7 +250,7 @@ begin
     OpB     => Alu_Op2,
     Control => AluControl,
     Result  => Alu_Res_EX,
-    Zflag   => ALU_IGUAL_EX
+    Zflag   => ALU_Igual_EX
   );
 
   Alu_Op2    <= reg_RT_EX when Ctrl_ALUSrc_EX = '0' else Inm_ext_EX;
@@ -264,7 +265,7 @@ begin
       Ctrl_MemRead_MEM  <= '0';
       Ctrl_MemWrite_MEM <= '0';
       Addr_Branch_MEM <= (others => '0');
-      ALU_IGUAL_MEM <= '0';
+      ALU_Igual_MEM <= '0';
       Alu_Res_MEM <= (others => '0');
       reg_RT_MEM <= (others => '0');
       reg_RD_MEM <= (others => '0');
@@ -275,7 +276,7 @@ begin
       Ctrl_MemRead_MEM  <= Ctrl_MemRead_EX;
       Ctrl_MemWrite_MEM <= Ctrl_MemWrite_EX;
       Addr_Branch_MEM <= Addr_Branch_EX;
-      ALU_IGUAL_MEM <= ALU_IGUAL_EX;
+      ALU_Igual_MEM <= ALU_Igual_EX;
       Alu_Res_MEM <= Alu_Res_EX;
       reg_RT_MEM <= reg_RT_EX;
       reg_RD_MEM <= reg_RD_EX;
@@ -285,7 +286,7 @@ begin
   DAddr      <= Alu_Res_MEM;
   DDataOut   <= reg_RT_MEM;
   DWrEn      <= Ctrl_MemWrite_MEM;
-  dRdEn      <= Ctrl_MemRead_MEM;
+  DRdEn      <= Ctrl_MemRead_MEM;
   dataIn_MEM <= DDataIn;
 
   MEM_WB_reg: process(Clk, Reset)
