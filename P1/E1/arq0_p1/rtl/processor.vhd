@@ -181,7 +181,7 @@ begin
     OpB     => Alu_Op2,
     Control => AluControl,
     Result  => Alu_Res,
-    Zflag   => ALU_IGUAL
+    Zflag   => ALU_Igual
   );
 
   Alu_Op2    <= reg_RT when Ctrl_ALUSrc = '0' else Inm_ext;
@@ -190,7 +190,7 @@ begin
   DAddr      <= Alu_Res;
   DDataOut   <= reg_RT;
   DWrEn      <= Ctrl_MemWrite;
-  dRdEn      <= Ctrl_MemRead;
+  DRdEn      <= Ctrl_MemRead;
   dataIn_Mem <= DDataIn;
 
   reg_RD_data <= dataIn_Mem when Ctrl_MemToReg = '1' else Alu_Res;
