@@ -35,6 +35,7 @@ architecture rtl of alu_control is
 begin
 
   AluControl <= ALU_ADD when AluOp = "000" else -- addi, lw o sw, que hace una suma
+                ALU_SUB when AluOp = "001" else -- beq
                 ALU_S16 when AluOp = "011" else -- lui,
                 ALU_SLT when AluOp = "111" else -- slti
                 ALU_ADD when AluOp = "010" and Funct = "100000" else -- add

@@ -122,12 +122,18 @@ architecture rtl of processor is
   signal desition_Jump  : std_logic;
   signal Alu_Res_EX, ALU_Res_MEM, Alu_Res_WB : std_logic_vector(31 downto 0);
 
+  signal enable_PC_reg  : std_logic;
   signal enable_IF_ID   : std_logic;
   signal enable_ID_EX   : std_logic;
   signal enable_EX_MEM  : std_logic;
   signal enable_MEM_WB  : std_logic;
 
 begin
+  enable_PC_reg <= '1';
+  enable_IF_ID <= '1';
+  enable_ID_EX <= '1';
+  enable_EX_MEM <= '1';
+  enable_MEM_WB <= '1';
 
   PC_next <= Addr_Jump_dest when desition_Jump = '1' else PC_plus4_IF;
 
@@ -135,7 +141,7 @@ begin
   begin
     if Reset = '1' then
       PC_reg <= (others => '0');
-    elsif rising_edge(Clk) then
+    elsif rising_edge(Clk)  and  enable_PC_reg = '1' then
       PC_reg <= PC_next;
     end if;
   end process;
@@ -190,7 +196,7 @@ begin
                 x"0000" & Instruction_ID(15 downto 0);
   Dir_reg_RT_ID <= Instruction_ID(20 downto 16);
   Dir_reg_RD_ID <= Instruction_ID(15 downto 11);
-  Addr_Jump     <= PC_plus4(31 downto 28) & Instruction(25 downto 0) & "00";
+  Addr_Jump     <= PC_plus4_ID(31 downto 28) & Instruction_ID(25 downto 0) & "00";
 
   ID_EX_reg: process(Clk, Reset)
   begin
@@ -279,7 +285,7 @@ begin
 
   desition_Jump  <= Ctrl_Jump or (Ctrl_Branch_MEM and ALU_Igual_MEM);
   Addr_Jump_dest <= Addr_Jump   when Ctrl_Jump='1'       else
-                    Addr_Branch when Ctrl_Branch_MEM='1' else
+                    Addr_Branch_MEM when Ctrl_Branch_MEM='1' else
                     (others =>'0');
 
   DAddr      <= Alu_Res_MEM;
