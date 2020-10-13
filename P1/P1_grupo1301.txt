@@ -1,0 +1,8 @@
+Pareja 08: Leandro García y Fabián Gutiérrez.
+
+Comentarios:
+- Las memorias fueron generadas con el compilador proporcionado, con lo que se
+  insertan instrucciones nop tras los saltos (beq, j).
+- El programa en ensamblador indica las instrucciones en las que la versión
+  segmentada del procesador falla al no gestionar riesgos. Naturalmente, en la
+  versión uniciclo sí se obtiene el resultado correcto.
