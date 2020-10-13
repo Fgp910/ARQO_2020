@@ -3,7 +3,7 @@ quietly WaveActivateNextPane {} 0
 add wave -noupdate /processor_tb/i_processor/Clk
 add wave -noupdate /processor_tb/i_processor/Reset
 add wave -noupdate -radix decimal /processor_tb/i_processor/PC_reg
-add wave -noupdate /processor_tb/i_processor/Instruction
+add wave -noupdate /processor_tb/i_processor/Instruction_IF
 add wave -noupdate -divider Regs
 add wave -noupdate -expand /processor_tb/i_processor/RegsMIPS/regs
 add wave -noupdate -divider DataMem
