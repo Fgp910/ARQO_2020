@@ -130,8 +130,8 @@ architecture rtl of processor is
 
 begin
   enable_PC_reg <= '1';
-  enable_IF_ID <= '1';
-  enable_ID_EX <= '1';
+  enable_IF_ID  <= '1';
+  enable_ID_EX  <= '1';
   enable_EX_MEM <= '1';
   enable_MEM_WB <= '1';
 
@@ -141,7 +141,7 @@ begin
   begin
     if Reset = '1' then
       PC_reg <= (others => '0');
-    elsif rising_edge(Clk)  and  enable_PC_reg = '1' then
+    elsif rising_edge(Clk) and enable_PC_reg = '1' then
       PC_reg <= PC_next;
     end if;
   end process;
