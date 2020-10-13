@@ -46,17 +46,17 @@ main:
   and $s4, $t7, $t2 # and $r20, $r15, $r10 -> r20=r15 and r10 = 2
   or $s5, $t1, $t2  # or $r21, $r9, $r10   -> r21=r9 or r10   = 3
   or $s6, $s0, $t2  # or $r22, $r16, $r10  -> r22=r16 or r10  = 14
-  slt $s7, $t1, $t2 # slt $r23, $r9, $r10  -> r23=1 si r9 < r10 else 0  = 1
+  slt $s7, $t1, $t2 # slt $r23, $r9, $r10  -> r23=1 si r9  < r10 else 0 = 1
   slt $t8, $s0, $t2 # slt $r24, $r16, $r10 -> r24=1 si r16 < r10 else 0 = 0
 
   # se añaden las nuevas instrucciones I-type
-  addi $t0, $s6, 6  # addi $r8, $r22, 6  -> r8=r22+6    = 20
-  addi $t0, $s0, -2 # addi $r8, $r16, -2 -> r8=r16-2    = 18
+  addi $t0, $s6, 6  # addi $r8, $r22, 6  -> r8=r22+6    = ERROR del micro: deberia ser 20, pero por dependencia sale 6
+  addi $t0, $s0, -2 # addi $r8, $r16, -2 -> r8=r16-2    = 10
   slti $t0, $s1, 2  # slti $r8, $r17, 2  -> r8=1 si r17 < 2 else 0 = 0
   slti $t0, $s2, 30 # slti $r8, $r18, 30 -> r8=1 si r18 < 2 else 0 = 1
 
   # carga datos inmediatos en la parte alta de registros
-  lui $t1, 1 # lui $r9, 1  -> queda a 65536  (0x00010000)
+  lui $t1, 1 # lui $r9,  1 -> queda a 65536  (0x00010000)
   lui $t2, 2 # lui $r10, 2 -> queda a 131072 (0x00020000)
 
   # salto condicional: solo comprobamos por ahora que salte o no y la direccion 
