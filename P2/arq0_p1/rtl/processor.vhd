@@ -72,7 +72,7 @@ architecture rtl of processor is
   end component;
 
   component alu_control is
-   port (
+    port (
       -- Entradas:
       ALUOp  : in std_logic_vector (2 downto 0); -- Codigo de control desde la unidad de control
       Funct  : in std_logic_vector (5 downto 0); -- Campo "funct" de la instruccion
@@ -93,6 +93,16 @@ architecture rtl of processor is
       --Salidas
       AdelantarA: out std_logic_vector(1 downto 0); --Control de adelantamiento de rs
       AdelantarB: out std_logic_vector(1 downto 0)  --Control de adelantamiento de rt
+    );
+  end component;
+  
+  component hazard_detection_unit is
+    port (
+      reg_RS_IF_ID   : in std_logic_vector(4 downto 0);
+      reg_RT_IF_ID   : in std_logic_vector(4 downto 0);
+      reg_RT_ID_EX   : in std_logic_vector(4 downto 0);
+      mem_read_ID_EX : in std_logic;
+      insert_bubble  : out std_logic
     );
   end component;
 
@@ -216,6 +226,21 @@ begin
     RegWrite => Ctrl_RegWrite_ID,
     RegDst   => Ctrl_RegDest_ID
   );
+
+  UnidadRiesgos : hazard_detection_unit
+  port map(
+    reg_RS_IF_ID   => reg_RS_ID,
+    reg_RT_IF_ID   => reg_RT_ID,
+    reg_RT_ID_EX   => reg_RT_EX,
+    mem_read_ID_EX => ,
+    insert_bubble  =>
+  );
+
+  Inm_ext_ID <= x"FFFF" & Instruction_ID(15 downto 0) when Instruction_ID(15)='1' else
+                x"0000" & Instruction_ID(15 downto 0);
+  Dir_reg_RT_ID <= Instruction_ID(20 downto 16);
+  Dir_reg_RD_ID <= Instruction_ID(15 downto 11);
+  Addr_Jump     <= PC_plus4_ID(31 downto 28) & Instruction_ID(25 downto 0) & "00";
 
   ID_EX_reg: process(Clk, Reset)
   begin
