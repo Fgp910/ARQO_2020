@@ -72,14 +72,24 @@ architecture rtl of processor is
   end component;
 
   component alu_control is
-   port (
+    port (
       -- Entradas:
       ALUOp  : in std_logic_vector (2 downto 0); -- Codigo de control desde la unidad de control
       Funct  : in std_logic_vector (5 downto 0); -- Campo "funct" de la instruccion
       -- Salida de control para la ALU:
       ALUControl : out std_logic_vector (3 downto 0) -- Define operacion a ejecutar por la ALU
-   );
- end component alu_control;
+    );
+  end component alu_control;
+
+  component hazard_detection_unit is
+    port (
+      reg_RS_IF_ID   : in std_logic_vector(4 downto 0);
+      reg_RT_IF_ID   : in std_logic_vector(4 downto 0);
+      reg_RT_ID_EX   : in std_logic_vector(4 downto 0);
+      mem_read_ID_EX : in std_logic;
+      insert_bubble  : out std_logic;
+    );
+  end component;
 
   signal Alu_Op2      : std_logic_vector(31 downto 0);
   signal ALU_Igual_EX, ALU_Igual_MEM    : std_logic;
@@ -190,6 +200,15 @@ begin
     -- Señales para el GPR
     RegWrite => Ctrl_RegWrite_ID,
     RegDst   => Ctrl_RegDest_ID
+  );
+
+  UnidadRiesgos : hazard_detection_unit
+  port map(
+    reg_RS_IF_ID   => reg_RS_ID,
+    reg_RT_IF_ID   => reg_RT_ID,
+    reg_RT_ID_EX   => reg_RT_EX,
+    mem_read_ID_EX => ,
+    insert_bubble  =>
   );
 
   Inm_ext_ID <= x"FFFF" & Instruction_ID(15 downto 0) when Instruction_ID(15)='1' else
