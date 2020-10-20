@@ -38,7 +38,7 @@ architecture rtl of processor is
   end component;
 
   component reg_bank
-     port (
+    port (
         Clk   : in std_logic; -- Reloj activo en flanco de subida
         Reset : in std_logic; -- Reset as�ncrono a nivel alto
         A1    : in std_logic_vector(4 downto 0);   -- Direcci�n para el puerto Rd1
@@ -52,7 +52,7 @@ architecture rtl of processor is
   end component reg_bank;
 
   component control_unit
-     port (
+    port (
         -- Entrada = codigo de operacion en la instruccion:
         OpCode   : in  std_logic_vector (5 downto 0);
         -- Seniales para el PC
@@ -68,7 +68,7 @@ architecture rtl of processor is
         -- Seniales para el GPR
         RegWrite : out  std_logic; -- 1=Escribir registro
         RegDst   : out  std_logic  -- 0=Reg. destino es rt, 1=rd
-     );
+    );
   end component;
 
   component alu_control is
@@ -78,10 +78,25 @@ architecture rtl of processor is
       Funct  : in std_logic_vector (5 downto 0); -- Campo "funct" de la instruccion
       -- Salida de control para la ALU:
       ALUControl : out std_logic_vector (3 downto 0) -- Define operacion a ejecutar por la ALU
-   );
- end component alu_control;
+    );
+  end component alu_control;
 
-  signal Alu_Op2      : std_logic_vector(31 downto 0);
+  component forwarding_unit is
+    port (
+      --Entradas
+      EX_MEM_RegWr: in std_logic; --Señal de escritura en fase MEM
+      MEM_WB_RegWr: in std_logic; --Señal de escritura en fase WB
+      EX_MEM_rd: in std_logic_vector(5 downto 0); --Registro destino en la fase MEM
+      MEM_WB_rd: in std_logic_vector(5 downto 0); --Registro destino en la fase WB
+      Reg_rs: in std_logic_vector(5 downto 0); --Registro rs
+      Reg_rt: in std_logic_vector(5 downto 0); --Registro rt
+      --Salidas
+      AdelantarA: out std_logic_vector(1 downto 0); --Control de adelantamiento de rs
+      AdelantarB: out std_logic_vector(1 downto 0)  --Control de adelantamiento de rt
+    );
+  end component;
+
+  signal Alu_Op1, Alu_Op2      : std_logic_vector(31 downto 0);
   signal ALU_Igual_EX, ALU_Igual_MEM    : std_logic;
   signal AluControl   : std_logic_vector(3 downto 0);
   signal reg_RD_data  : std_logic_vector(31 downto 0);
@@ -97,8 +112,8 @@ architecture rtl of processor is
   signal Instruction_IF : std_logic_vector(31 downto 0); -- La instrucción desde lamem de instr
   signal Instruction_ID : std_logic_vector(31 downto 0);
   signal Inm_ext_ID, Inm_ext_EX     : std_logic_vector(31 downto 0); -- La parte baja de la instrucción extendida de signo
-  signal Dir_reg_RT_ID, Dir_reg_RD_ID : std_logic_vector(4 downto 0);
-  signal Dir_reg_RT_EX, Dir_reg_RD_EX : std_logic_vector(4 downto 0);
+  signal Dir_reg_RS_ID, Dir_reg_RT_ID, Dir_reg_RD_ID : std_logic_vector(4 downto 0);
+  signal Dir_reg_RS_EX, Dir_reg_RT_EX, Dir_reg_RD_EX : std_logic_vector(4 downto 0);
   signal reg_RS_ID, reg_RT_ID         : std_logic_vector(31 downto 0);
   signal reg_RS_EX, reg_RT_EX, reg_RT_MEM         : std_logic_vector(31 downto 0);
 
@@ -127,6 +142,9 @@ architecture rtl of processor is
   signal enable_ID_EX   : std_logic;
   signal enable_EX_MEM  : std_logic;
   signal enable_MEM_WB  : std_logic;
+
+  signal AdelantarA, AdelantarB : std_logic_vector(1 downto 0);
+  signal reg_2: std_logic_vector(31 downto 0);
 
 begin
   enable_PC_reg <= '1';
@@ -161,13 +179,20 @@ begin
     end if;
   end process;
 
+  Inm_ext_ID <= x"FFFF" & Instruction_ID(15 downto 0) when Instruction_ID(15)='1' else
+                x"0000" & Instruction_ID(15 downto 0);
+  Dir_reg_RS_ID <= Instruction_ID(25 downto 21);
+  Dir_reg_RT_ID <= Instruction_ID(20 downto 16);
+  Dir_reg_RD_ID <= Instruction_ID(15 downto 11);
+  Addr_Jump     <= PC_plus4_ID(31 downto 28) & Instruction_ID(25 downto 0) & "00";
+
   RegsMIPS : reg_bank
   port map (
     Clk   => Clk,
     Reset => Reset,
-    A1    => Instruction_ID(25 downto 21),
+    A1    => Dir_reg_RS_ID,
     Rd1   => reg_RS_ID,
-    A2    => Instruction_ID(20 downto 16),
+    A2    => Dir_reg_RT_ID,
     Rd2   => reg_RT_ID,
     A3    => reg_RD_WB,
     Wd3   => reg_RD_data,
@@ -192,12 +217,6 @@ begin
     RegDst   => Ctrl_RegDest_ID
   );
 
-  Inm_ext_ID <= x"FFFF" & Instruction_ID(15 downto 0) when Instruction_ID(15)='1' else
-                x"0000" & Instruction_ID(15 downto 0);
-  Dir_reg_RT_ID <= Instruction_ID(20 downto 16);
-  Dir_reg_RD_ID <= Instruction_ID(15 downto 11);
-  Addr_Jump     <= PC_plus4_ID(31 downto 28) & Instruction_ID(25 downto 0) & "00";
-
   ID_EX_reg: process(Clk, Reset)
   begin
     if Reset = '1' then
@@ -213,6 +232,7 @@ begin
       reg_RS_EX        <= (others => '0');
       reg_RT_EX        <= (others => '0');
       Inm_ext_EX       <= (others => '0');
+      Dir_reg_RS_EX    <= (others => '0');
       Dir_reg_RT_EX    <= (others => '0');
       Dir_reg_RD_EX    <= (others => '0');
     elsif rising_edge(Clk) and enable_ID_EX = '1' then
@@ -228,12 +248,27 @@ begin
       reg_RS_EX        <= reg_RS_ID;
       reg_RT_EX        <= reg_RT_ID;
       Inm_ext_EX       <= Inm_ext_ID;
+      Dir_reg_RS_EX    <= Dir_reg_RS_ID;
       Dir_reg_RT_EX    <= Dir_reg_RT_ID;
       Dir_reg_RD_EX    <= Dir_reg_RD_ID;
     end if;
   end process;
 
   Addr_Branch_EX <= PC_plus4_EX + (Inm_ext_EX(29 downto 0) & "00");
+
+  Fwd_unit : forwarding_unit
+  port map(
+    --Entradas
+    EX_MEM_RegWr => Ctrl_RegWrite_MEM;
+    MEM_WB_RegWr => Ctrl_RegWrite_WB;
+    EX_MEM_rd    => Reg_RD_MEM;
+    MEM_WB_rd    => Reg_RD_WB;
+    Reg_rs       => Dir_reg_RS_EX;
+    Reg_rt       => Dir_reg_RT_EX;
+    --Salidas
+    AdelantarA   => AdelantarA;
+    AdelantarB   => AdelantarB
+  );
 
   Alu_control_i: alu_control
   port map(
@@ -246,14 +281,22 @@ begin
 
   Alu_MIPS : alu
   port map (
-    OpA     => reg_RS_EX,
+    OpA     => Alu_Op1,
     OpB     => Alu_Op2,
     Control => AluControl,
     Result  => Alu_Res_EX,
     Zflag   => ALU_Igual_EX
   );
 
-  Alu_Op2   <= reg_RT_EX when Ctrl_ALUSrc_EX = '0' else Inm_ext_EX;
+  Alu_Op1   <= reg_RS_EX when AdelantarA = '00' else
+               Alu_Res_MEM when AdelantarA = '10' else
+               reg_RD_data when AdelantarA = '01' else
+               (others => '0');
+  reg_2     <= reg_RT_EX when AdelantarB = '00' else
+               Alu_Res_MEM when AdelantarB = '10' else
+               reg_RD_data when AdelantarB = '01' else
+               (others => '0');
+  Alu_Op2   <= reg_2 when Ctrl_ALUSrc_EX = '0' else Inm_ext_EX;
   reg_RD_EX <= Dir_reg_RT_EX when Ctrl_RegDest_EX = '0' else Dir_reg_RD_EX;
 
   EX_MEM_reg: process(Clk, Reset)
