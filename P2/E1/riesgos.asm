@@ -73,17 +73,17 @@ main:
   nop
   nop
   # RIESGOS MEMORIA REGISTRO
-  lw $t3, 0($zero) # en r9 un 1
+  lw $t3, 0($zero) # en r11 un 1
   add $t4, $t2, $t3 # dependencia con la anterior # en r12 37 = 36 + 1
   nop
   nop
   nop
-  lw $t3, 4($zero) # en r9 un 2
+  lw $t3, 4($zero) # en r11 un 2
   nop
   add $t4, $t2, $t3 # dependencia con la 2ª anterior # en r12 38 = 36 + 2
   nop
   nop
-  lw $t3, 8($zero) # en r9 un 4
+  lw $t3, 8($zero) # en r11 un 4
   nop
   nop
   add $t4, $t2, $t3 # dependencia con la 3ª anterior # en r12 40 = 36 + 4
