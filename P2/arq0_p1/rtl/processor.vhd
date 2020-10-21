@@ -1,5 +1,6 @@
 --------------------------------------------------------------------------------
--- Procesador MIPS con pipeline curso Arquitectura 2020-2021
+-- Procesador MIPS con pipeline curso Arquitectura 2020-2021.
+-- Seguro ante riesgos de datos.
 --
 -- Grupo 1301_08: Leandro Garcia y Fabian Gutierrez.
 --
@@ -156,9 +157,11 @@ architecture rtl of processor is
   signal AdelantarA, AdelantarB : std_logic_vector(1 downto 0);
   signal reg_2: std_logic_vector(31 downto 0);
 
+  signal hazard_stall : std_logic;
+
 begin
-  enable_PC_reg <= '1';
-  enable_IF_ID  <= '1';
+  enable_PC_reg <= not hazard_stall;
+  enable_IF_ID  <= not hazard_stall;
   enable_ID_EX  <= '1';
   enable_EX_MEM <= '1';
   enable_MEM_WB <= '1';
@@ -229,14 +232,16 @@ begin
 
   UnidadRiesgos : hazard_detection_unit
   port map(
+    --Entradas
     reg_RS_IF_ID   => reg_RS_ID,
     reg_RT_IF_ID   => reg_RT_ID,
     reg_RT_ID_EX   => reg_RT_EX,
-    mem_read_ID_EX => ,
-    insert_bubble  =>
+    mem_read_ID_EX => Ctrl_MemRead_ID,
+    --Salida
+    insert_bubble  => hazard_stall
   );
 
-  Inm_ext_ID <= x"FFFF" & Instruction_ID(15 downto 0) when Instruction_ID(15)='1' else
+  Inm_ext_ID <= x"FFFF" & Instruction_ID(15 downto 0) when Instruction_ID(15) = '1' else
                 x"0000" & Instruction_ID(15 downto 0);
   Dir_reg_RT_ID <= Instruction_ID(20 downto 16);
   Dir_reg_RD_ID <= Instruction_ID(15 downto 11);
@@ -251,8 +256,8 @@ begin
       Ctrl_MemRead_EX  <= '0';
       Ctrl_MemWrite_EX <= '0';
       Ctrl_RegDest_EX  <= '0';
-      Ctrl_ALUOP_EX    <= (others => '0');
       Ctrl_ALUSrc_EX   <= '0';
+      Ctrl_ALUOP_EX    <= (others => '0');
       PC_plus4_EX      <= (others => '0');
       reg_RS_EX        <= (others => '0');
       reg_RT_EX        <= (others => '0');
@@ -261,14 +266,14 @@ begin
       Dir_reg_RT_EX    <= (others => '0');
       Dir_reg_RD_EX    <= (others => '0');
     elsif rising_edge(Clk) and enable_ID_EX = '1' then
-      Ctrl_RegWrite_EX <= Ctrl_RegWrite_ID;
-      Ctrl_MemToReg_EX <= Ctrl_MemToReg_ID;
-      Ctrl_Branch_EX   <= Ctrl_Branch_ID;
-      Ctrl_MemRead_EX  <= Ctrl_MemRead_ID;
-      Ctrl_MemWrite_EX <= Ctrl_MemWrite_ID;
-      Ctrl_RegDest_EX  <= Ctrl_RegDest_ID;
-      Ctrl_ALUOP_EX    <= Ctrl_ALUOP_ID;
-      Ctrl_ALUSrc_EX   <= Ctrl_ALUSrc_ID;
+      Ctrl_RegWrite_EX <= Ctrl_RegWrite_ID when hazard_stall = '0' else '0';
+      Ctrl_MemToReg_EX <= Ctrl_MemToReg_ID when hazard_stall = '0' else '0';
+      Ctrl_Branch_EX   <= Ctrl_Branch_ID   when hazard_stall = '0' else '0';
+      Ctrl_MemRead_EX  <= Ctrl_MemRead_ID  when hazard_stall = '0' else '0';
+      Ctrl_MemWrite_EX <= Ctrl_MemWrite_ID when hazard_stall = '0' else '0';
+      Ctrl_RegDest_EX  <= Ctrl_RegDest_ID  when hazard_stall = '0' else '0';
+      Ctrl_ALUSrc_EX   <= Ctrl_ALUSrc_ID   when hazard_stall = '0' else '0';
+      Ctrl_ALUOP_EX    <= Ctrl_ALUOP_ID    when hazard_stall = '0' else (others => '0');
       PC_plus4_EX      <= PC_plus4_ID;
       reg_RS_EX        <= reg_RS_ID;
       reg_RT_EX        <= reg_RT_ID;
