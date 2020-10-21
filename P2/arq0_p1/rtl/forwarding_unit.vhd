@@ -27,11 +27,11 @@ end forwarding_unit;
 
 architecture rtl of forwarding_unit is
 begin
-    AdelantarA <= '10' when EX_MEM_RegWr = '1' and EX_MEM_rd /= '000000' and EX_MEM_rd = Reg_rs else
-                  '01' when MEM_WB_RegWr = '1' and MEM_WB_rd /= '000000' and MEM_WB_rd = Reg_rs else
-                  '00';
+    AdelantarA <= "10" when EX_MEM_RegWr = '1' and EX_MEM_rd /= "000000" and EX_MEM_rd = Reg_rs else
+                  "01" when MEM_WB_RegWr = '1' and MEM_WB_rd /= "000000" and MEM_WB_rd = Reg_rs else
+                  "00";
 
-    AdelantarB <= '10' when EX_MEM_RegWr = '1' and EX_MEM_rd /= '000000' and EX_MEM_rd = Reg_rt else
-                  '01' when MEM_WB_RegWr = '1' and MEM_WB_rd /= '000000' and MEM_WB_rd = Reg_rt else
-                  '00';
+    AdelantarB <= "10" when EX_MEM_RegWr = '1' and EX_MEM_rd /= "000000" and EX_MEM_rd = Reg_rt else
+                  "01" when MEM_WB_RegWr = '1' and MEM_WB_rd /= "000000" and MEM_WB_rd = Reg_rt else
+                  "00";
 end architecture;

@@ -14,6 +14,8 @@ vcom -work work -2002 -explicit -check_synthesis ../rtl/alu.vhd
 vcom -work work -2002 -explicit -check_synthesis ../rtl/alu_control.vhd
 vcom -work work -2002 -explicit -check_synthesis ../rtl/control_unit.vhd
 vcom -work work -2002 -explicit -check_synthesis ../rtl/processor.vhd
+vcom -work work -2002 -explicit -check_synthesis ../rtl/forwarding_unit.vhd
+vcom -work work -2002 -explicit -check_synthesis ../rtl/hazard_detection_unit.vhd
 
 # Compilar testbench:
 vcom -work work -2002 -explicit memory.vhd

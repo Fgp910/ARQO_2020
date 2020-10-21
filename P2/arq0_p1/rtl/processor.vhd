@@ -40,7 +40,7 @@ architecture rtl of processor is
 
   component reg_bank
     port (
-        Clk   : in std_logic; -- Reloj activo en flanco de subida
+        Clk   : in std_logic; -- Reloj activo en flanco de bajada
         Reset : in std_logic; -- Reset as�ncrono a nivel alto
         A1    : in std_logic_vector(4 downto 0);   -- Direcci�n para el puerto Rd1
         Rd1   : out std_logic_vector(31 downto 0); -- Dato del puerto Rd1
@@ -87,10 +87,10 @@ architecture rtl of processor is
       --Entradas
       EX_MEM_RegWr: in std_logic; --Señal de escritura en fase MEM
       MEM_WB_RegWr: in std_logic; --Señal de escritura en fase WB
-      EX_MEM_rd: in std_logic_vector(5 downto 0); --Registro destino en la fase MEM
-      MEM_WB_rd: in std_logic_vector(5 downto 0); --Registro destino en la fase WB
-      Reg_rs: in std_logic_vector(5 downto 0); --Registro rs
-      Reg_rt: in std_logic_vector(5 downto 0); --Registro rt
+      EX_MEM_rd: in std_logic_vector(4 downto 0); --Registro destino en la fase MEM
+      MEM_WB_rd: in std_logic_vector(4 downto 0); --Registro destino en la fase WB
+      Reg_rs: in std_logic_vector(4 downto 0); --Registro rs
+      Reg_rt: in std_logic_vector(4 downto 0); --Registro rt
       --Salidas
       AdelantarA: out std_logic_vector(1 downto 0); --Control de adelantamiento de rs
       AdelantarB: out std_logic_vector(1 downto 0)  --Control de adelantamiento de rt
@@ -233,10 +233,10 @@ begin
   UnidadRiesgos : hazard_detection_unit
   port map(
     --Entradas
-    reg_RS_IF_ID   => reg_RS_ID,
-    reg_RT_IF_ID   => reg_RT_ID,
-    reg_RT_ID_EX   => reg_RT_EX,
-    mem_read_ID_EX => Ctrl_MemRead_ID,
+    reg_RS_IF_ID   => Dir_reg_RS_ID,
+    reg_RT_IF_ID   => Dir_reg_RT_ID,
+    reg_RT_ID_EX   => Dir_reg_RT_EX,
+    mem_read_ID_EX => Ctrl_MemRead_EX,
     --Salida
     insert_bubble  => hazard_stall
   );
@@ -265,15 +265,31 @@ begin
       Dir_reg_RS_EX    <= (others => '0');
       Dir_reg_RT_EX    <= (others => '0');
       Dir_reg_RD_EX    <= (others => '0');
-    elsif rising_edge(Clk) and enable_ID_EX = '1' then
-      Ctrl_RegWrite_EX <= Ctrl_RegWrite_ID when hazard_stall = '0' else '0';
-      Ctrl_MemToReg_EX <= Ctrl_MemToReg_ID when hazard_stall = '0' else '0';
-      Ctrl_Branch_EX   <= Ctrl_Branch_ID   when hazard_stall = '0' else '0';
-      Ctrl_MemRead_EX  <= Ctrl_MemRead_ID  when hazard_stall = '0' else '0';
-      Ctrl_MemWrite_EX <= Ctrl_MemWrite_ID when hazard_stall = '0' else '0';
-      Ctrl_RegDest_EX  <= Ctrl_RegDest_ID  when hazard_stall = '0' else '0';
-      Ctrl_ALUSrc_EX   <= Ctrl_ALUSrc_ID   when hazard_stall = '0' else '0';
-      Ctrl_ALUOP_EX    <= Ctrl_ALUOP_ID    when hazard_stall = '0' else (others => '0');
+    elsif rising_edge(Clk) and enable_ID_EX = '1' and hazard_stall = '0' then
+      Ctrl_RegWrite_EX <= Ctrl_RegWrite_ID; 
+      Ctrl_MemToReg_EX <= Ctrl_MemToReg_ID; 
+      Ctrl_Branch_EX   <= Ctrl_Branch_ID;  
+      Ctrl_MemRead_EX  <= Ctrl_MemRead_ID;
+      Ctrl_MemWrite_EX <= Ctrl_MemWrite_ID; 
+      Ctrl_RegDest_EX  <= Ctrl_RegDest_ID;  
+      Ctrl_ALUSrc_EX   <= Ctrl_ALUSrc_ID;   
+      Ctrl_ALUOP_EX    <= Ctrl_ALUOP_ID;    
+      PC_plus4_EX      <= PC_plus4_ID;
+      reg_RS_EX        <= reg_RS_ID;
+      reg_RT_EX        <= reg_RT_ID;
+      Inm_ext_EX       <= Inm_ext_ID;
+      Dir_reg_RS_EX    <= Dir_reg_RS_ID;
+      Dir_reg_RT_EX    <= Dir_reg_RT_ID;
+      Dir_reg_RD_EX    <= Dir_reg_RD_ID;
+    elsif rising_edge(Clk) and enable_ID_EX = '1' and hazard_stall = '1' then
+      Ctrl_RegWrite_EX <= '0';
+      Ctrl_MemToReg_EX <= '0';
+      Ctrl_Branch_EX   <= '0';
+      Ctrl_MemRead_EX  <= '0';
+      Ctrl_MemWrite_EX <= '0';
+      Ctrl_RegDest_EX  <= '0';
+      Ctrl_ALUSrc_EX   <= '0';
+      Ctrl_ALUOP_EX    <= (others => '0');
       PC_plus4_EX      <= PC_plus4_ID;
       reg_RS_EX        <= reg_RS_ID;
       reg_RT_EX        <= reg_RT_ID;
@@ -289,14 +305,14 @@ begin
   Fwd_unit : forwarding_unit
   port map(
     --Entradas
-    EX_MEM_RegWr => Ctrl_RegWrite_MEM;
-    MEM_WB_RegWr => Ctrl_RegWrite_WB;
-    EX_MEM_rd    => Reg_RD_MEM;
-    MEM_WB_rd    => Reg_RD_WB;
-    Reg_rs       => Dir_reg_RS_EX;
-    Reg_rt       => Dir_reg_RT_EX;
+    EX_MEM_RegWr => Ctrl_RegWrite_MEM,
+    MEM_WB_RegWr => Ctrl_RegWrite_WB,
+    EX_MEM_rd    => Reg_RD_MEM,
+    MEM_WB_rd    => Reg_RD_WB,
+    Reg_rs       => Dir_reg_RS_EX,
+    Reg_rt       => Dir_reg_RT_EX,
     --Salidas
-    AdelantarA   => AdelantarA;
+    AdelantarA   => AdelantarA,
     AdelantarB   => AdelantarB
   );
 
@@ -318,13 +334,13 @@ begin
     Zflag   => ALU_Igual_EX
   );
 
-  Alu_Op1   <= reg_RS_EX when AdelantarA = '00' else
-               Alu_Res_MEM when AdelantarA = '10' else
-               reg_RD_data when AdelantarA = '01' else
+  Alu_Op1   <= reg_RS_EX when AdelantarA = "00" else
+               Alu_Res_MEM when AdelantarA = "10" else
+               reg_RD_data when AdelantarA = "01" else
                (others => '0');
-  reg_2     <= reg_RT_EX when AdelantarB = '00' else
-               Alu_Res_MEM when AdelantarB = '10' else
-               reg_RD_data when AdelantarB = '01' else
+  reg_2     <= reg_RT_EX when AdelantarB = "00" else
+               Alu_Res_MEM when AdelantarB = "10" else
+               reg_RD_data when AdelantarB = "01" else
                (others => '0');
   Alu_Op2   <= reg_2 when Ctrl_ALUSrc_EX = '0' else Inm_ext_EX;
   reg_RD_EX <= Dir_reg_RT_EX when Ctrl_RegDest_EX = '0' else Dir_reg_RD_EX;
