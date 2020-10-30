@@ -185,7 +185,7 @@ begin
 
   IF_ID_reg: process(Clk, Reset)
   begin
-    if Reset = '1' or Branch_Taken = '1' then
+    if Reset = '1' or (rising_edge(Clk) and Branch_Taken = '1') then
       PC_plus4_ID    <= (others => '0');
       Instruction_ID <= (others => '0');
     elsif rising_edge(Clk) and enable_IF_ID = '1' then
@@ -251,7 +251,7 @@ begin
 
   ID_EX_reg: process(Clk, Reset)
   begin
-    if Reset = '1' or Branch_Taken = '1' then
+    if Reset = '1' or (rising_edge(Clk) and Branch_Taken = '1') then
       Ctrl_RegWrite_EX <= '0';
       Ctrl_MemToReg_EX <= '0';
       Ctrl_Branch_EX   <= '0';
@@ -344,7 +344,7 @@ begin
 
   EX_MEM_reg: process(Clk, Reset)
   begin
-    if Reset = '1' or Branch_Taken = '1' then
+    if Reset = '1' or (rising_edge(Clk) and Branch_Taken = '1') then
       Ctrl_RegWrite_MEM <= '0';
       Ctrl_MemToReg_MEM <= '0';
       Ctrl_Branch_MEM   <= '0';
