@@ -3,8 +3,8 @@
 .data 0
 num0:  .word 1  # posic 0
 num1:  .word 2  # posic 4
-num2:  .word 4  # posic 8 
-num3:  .word 8  # posic 12 
+num2:  .word 4  # posic 8
+num3:  .word 8  # posic 12
 
 .text 0
 main:
@@ -18,9 +18,9 @@ main:
   nop
 
   # R-type antes de branch
-  add $s0, $zero, $zero  
-  beq $s0, $t1, salto1   # No salta
-  add $s1, $zero, $zero
+  add $s0, $t1, $zero
+  beq $s0, $t2, salto1   # No salta
+  add $s1, $t1, $zero
   beq $s1, $s1, salto1   # Salta
   add $t4, $t4, $t4      # No se debe ejecutar
   add $t4, $t4, $t4      # No se debe ejecutar
@@ -36,15 +36,15 @@ main:
   lw $s0, 0($zero)
   beq $s0, $zero, salto2 # No salta
   lw $s1, 4($zero)
-  beq $s1, $s1, salto23  # Salta
+  beq $s1, $s1, salto2   # Salta
   add $t4, $t4, $t4      # No se debe ejecutar
   add $t4, $t4, $t4      # No se debe ejecutar
-  add $t4, $t4, $t4      # No se debe ejecutar 
+  add $t4, $t4, $t4      # No se debe ejecutar
   nop
   nop
   nop
   nop
-  nop 
+  nop
 
   # Cancelación del stall después de un branch efectivo
   salto2:
