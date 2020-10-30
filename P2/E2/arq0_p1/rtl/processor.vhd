@@ -374,7 +374,7 @@ begin
                     Addr_Jump       when Ctrl_Jump = '1'       else
                     (others => '0');
   
-  Branch_Taken <= Ctrl_Branch_MEM and ALU_Igual_MEM
+  Branch_Taken <= Ctrl_Branch_MEM and ALU_Igual_MEM;
 
   DAddr      <= Alu_Res_MEM;
   DDataOut   <= reg_RT_MEM;
