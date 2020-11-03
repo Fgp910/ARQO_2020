@@ -7,3 +7,6 @@ Comentarios:
   ejercicio 2 se suprime el nop generado automáticamente tras la última llamada
   a beq para poder comprobar la precedencia del salto (condicional) efectivo
   respecto a posibles paradas provocadas por la unidad de riesgos (Hazard unit).
+- Para comodidad de los correctores, se entregan todos los ficheros necesarios
+  para la poder simular inmediatamente. En particular se hace para evitar tener
+  que modificar las memorias de instrucciones según el ejercicio a simular.
