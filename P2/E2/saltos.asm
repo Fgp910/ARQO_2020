@@ -34,7 +34,7 @@ main:
   # Load antes de branch
   salto1:
   lw $s0, 4($zero)
-  beq $s0, $zero, salto2 # No salta (se detiene 1 ciclo)
+  beq $s0, $zero, salto2 # No salta (se detiene 1 ciclo: load-use hazard)
   lw $s1, 4($zero)
   beq $s1, $s1, salto2   # Salta (se detiene 1 ciclo)
   add $t4, $t4, $t4      # No se debe ejecutar
