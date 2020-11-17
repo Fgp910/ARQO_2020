@@ -3,11 +3,13 @@
 #!/bin/bash
 
 # inicializar variables
+P=5
 Ninicio=100
 Npaso=16
 Nfinal=$((Ninicio + 100))
-fDAT=slow_fast_time.dat
-fPNG=slow_fast_time.png
+Iter=10
+fDAT=time_slow_fast.dat
+fPNG=time_slow_fast.png
 
 # borrar el fichero DAT y el fichero PNG
 rm -f $fDAT fPNG
@@ -18,17 +20,18 @@ touch $fDAT
 echo "Running slow and fast..."
 # bucle para N desde P hasta Q 
 #for N in $(seq $Ninicio $Npaso $Nfinal);
-for ((N = Ninicio ; N <= Nfinal ; N += Npaso)); do
-	echo "N: $N / $Nfinal..."
-	
-	# ejecutar los programas slow y fast consecutivamente con tamaño de matriz N
-	# para cada uno, filtrar la línea que contiene el tiempo y seleccionar la
-	# tercera columna (el valor del tiempo). Dejar los valores en variables
-	# para poder imprimirlos en la misma línea del fichero de datos
-	slowTime=$(./slow $N | grep 'time' | awk '{print $3}')
-	fastTime=$(./fast $N | grep 'time' | awk '{print $3}')
+for ((i = 0; i < Iter; i++)); do
+    for ((N = Ninicio ; N <= Nfinal ; N += Npaso)); do
+        echo "N: $N / $Nfinal..."
+        # ejecutar los programas slow y fast consecutivamente con tamaño de matriz N
+        # para cada uno, filtrar la línea que contiene el tiempo y seleccionar la
+        # tercera columna (el valor del tiempo). Dejar los valores en variables
+        # para poder imprimirlos en la misma línea del fichero de datos
+        slowTime=$(./slow $N | grep 'time' | awk '{print $3}')
+        fastTime=$(./fast $N | grep 'time' | awk '{print $3}')
 
-	echo "$N	$slowTime	$fastTime" >> $fDAT
+        echo "$N	$slowTime	$fastTime" >> $fDAT
+    done
 done
 
 echo "Generating plot..."
