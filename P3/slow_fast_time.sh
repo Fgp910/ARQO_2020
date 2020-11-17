@@ -7,7 +7,7 @@ P=5
 Ninicio=100
 Npaso=16
 Nfinal=$((Ninicio + 100))
-Iter=10
+Iter=2
 fDAT=time_slow_fast.dat
 fPNG=time_slow_fast.png
 
@@ -20,8 +20,8 @@ touch $fDAT
 echo "Running slow and fast..."
 # bucle para N desde P hasta Q 
 #for N in $(seq $Ninicio $Npaso $Nfinal);
-for ((i = 0; i < Iter; i++)); do
-    for ((N = Ninicio ; N <= Nfinal ; N += Npaso)); do
+for ((i=0; i < Iter; i++)); do
+    for ((N=Ninicio ; N <= Nfinal ; N+=Npaso)); do
         echo "N: $N / $Nfinal..."
         # ejecutar los programas slow y fast consecutivamente con tamaño de matriz N
         # para cada uno, filtrar la línea que contiene el tiempo y seleccionar la
