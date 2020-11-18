@@ -7,6 +7,7 @@ P=5
 Ninicio=100
 Npaso=16
 Nfinal=$((Ninicio + 100))
+Nsizes=$(((Nfinal - Ninicio + Npaso)/Npaso))
 Iter=2
 fDAT=time_slow_fast.dat
 fPNG=time_slow_fast.png
@@ -20,19 +21,29 @@ touch $fDAT
 echo "Running slow and fast..."
 # bucle para N desde P hasta Q 
 #for N in $(seq $Ninicio $Npaso $Nfinal);
+declare -a slowTime=( $(for i in {1..Nsizes}; do echo 0; done) )
+declare -a fastTime=( $(for i in {1..Nsizes}; do echo 0; done) )
 for ((i=0; i < Iter; i++)); do
+    echo "I: $i / $Iter..."
     for ((N=Ninicio ; N <= Nfinal ; N+=Npaso)); do
-        echo "N: $N / $Nfinal..."
-        # ejecutar los programas slow y fast consecutivamente con tamaño de matriz N
-        # para cada uno, filtrar la línea que contiene el tiempo y seleccionar la
-        # tercera columna (el valor del tiempo). Dejar los valores en variables
-        # para poder imprimirlos en la misma línea del fichero de datos
+        echo "\tslow, N: $N / $Nfinal..."
+        j=$(((N - Ninicio + Npaso)/Npaso))
         aux=$(./slow $N | grep 'time' | awk '{print $3}')
-        slowTime=$(echo "$slowTime + $aux" | bc)
-        fastTime=$(./fast $N | grep 'time' | awk '{print $3}')
-
-        echo "$N	$slowTime	$fastTime" >> $fDAT
+        slowTime[$j]=$(echo "$slowTime[$j] + $aux" | bc)
     done
+    for ((N=Ninicio ; N <= Nfinal ; N+=Npaso)); do
+        echo "\tfast, N: $N / $Nfinal..."
+        j=$(((N - Ninicio + Npaso)/Npaso))
+        aux=$(./fast $N | grep 'time' | awk '{print $3}')
+        fastTime[$j]=$(echo "$fastTime[%j] + $aux" | bc)
+    done
+done
+
+for ((N=Ninicio ; N <= Nfinal ; N+=Npaso)); do
+    j=$(((N - Ninicio + Npaso)/Npaso))
+    slowTimeMean=$(echo "$slowTime[j]/$Iter" | bc)
+    fastTimeMean=$(echo "$fastTime[j]/$Iter" | bc)
+    echo "$N	$slowTimeMean	$fastTimeMean" >> $fDAT
 done
 
 echo "Generating plot..."
