@@ -27,7 +27,8 @@ for ((i=0; i < Iter; i++)); do
         # para cada uno, filtrar la línea que contiene el tiempo y seleccionar la
         # tercera columna (el valor del tiempo). Dejar los valores en variables
         # para poder imprimirlos en la misma línea del fichero de datos
-        slowTime=$(./slow $N | grep 'time' | awk '{print $3}')
+        aux=$(./slow $N | grep 'time' | awk '{print $3}')
+        slowTime=$(echo "$slowTime + $aux" | bc)
         fastTime=$(./fast $N | grep 'time' | awk '{print $3}')
 
         echo "$N	$slowTime	$fastTime" >> $fDAT
