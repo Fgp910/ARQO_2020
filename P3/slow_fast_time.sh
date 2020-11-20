@@ -4,11 +4,10 @@
 
 # inicializar variables
 P=5
-Ninicio=100
-Npaso=16
-Nfinal=$((Ninicio + 100))
-Nsizes=$(((Nfinal - Ninicio + Npaso)/Npaso))
-Iter=1
+Ninicio=$((1000 + 1024 * $P))
+Npaso=64
+Nfinal=$((1000 + 1024 * ($P + 1)))
+Iter=3
 fDAT=time_slow_fast.dat
 fPNG=time_slow_fast.png
 
@@ -21,8 +20,10 @@ touch $fDAT
 echo "Running slow and fast..."
 # bucle para N desde P hasta Q 
 #for N in $(seq $Ninicio $Npaso $Nfinal);
-for i in {1..Nsizes}; do slowTime+=(0); done
-for i in {1..Nsizes}; do fastTime+=(0); done
+unset slowTime
+unset fastTime
+for i in $(seq $Ninicio $Npaso $Nfinal); do slowTime+=(0); done
+for i in $(seq $Ninicio $Npaso $Nfinal); do fastTime+=(0); done
 for ((i=1; i <= Iter; i++)); do
     echo "I: $i / $Iter..."
     for ((N=Ninicio, j=0; N <= Nfinal ; N+=Npaso, j++)); do
@@ -37,9 +38,9 @@ for ((i=1; i <= Iter; i++)); do
     done
 done
 
-for ((N=Ninicio ; N <= Nfinal ; N+=Npaso)); do
-    slowTimeMean=$(echo "${slowTime[$j]}/$Iter" | bc)
-    fastTimeMean=$(echo "${fastTime[$j]}/$Iter" | bc)
+for ((N=Ninicio, j=0; N <= Nfinal ; N+=Npaso, j++)); do
+    slowTimeMean=$(echo "${slowTime[$j]} / $Iter" | bc -l)
+    fastTimeMean=$(echo "${fastTime[$j]} / $Iter" | bc -l)
     echo "$N	$slowTimeMean	$fastTimeMean" >> $fDAT
 done
 
