@@ -8,7 +8,7 @@ Ninicio=100
 Npaso=16
 Nfinal=$((Ninicio + 100))
 Nsizes=$(((Nfinal - Ninicio + Npaso)/Npaso))
-Iter=2
+Iter=1
 fDAT=time_slow_fast.dat
 fPNG=time_slow_fast.png
 
@@ -21,28 +21,25 @@ touch $fDAT
 echo "Running slow and fast..."
 # bucle para N desde P hasta Q 
 #for N in $(seq $Ninicio $Npaso $Nfinal);
-declare -a slowTime=( $(for i in {1..Nsizes}; do echo 0; done) )
-declare -a fastTime=( $(for i in {1..Nsizes}; do echo 0; done) )
-for ((i=0; i < Iter; i++)); do
+for i in {1..Nsizes}; do slowTime+=(0); done
+for i in {1..Nsizes}; do fastTime+=(0); done
+for ((i=1; i <= Iter; i++)); do
     echo "I: $i / $Iter..."
-    for ((N=Ninicio ; N <= Nfinal ; N+=Npaso)); do
-        echo "\tslow, N: $N / $Nfinal..."
-        j=$(((N - Ninicio + Npaso)/Npaso))
+    for ((N=Ninicio, j=0; N <= Nfinal ; N+=Npaso, j++)); do
+        echo -e "\tslow, N: $N / $Nfinal..."
         aux=$(./slow $N | grep 'time' | awk '{print $3}')
-        slowTime[$j]=$(echo "$slowTime[$j] + $aux" | bc)
+        slowTime[$j]=$(echo "${slowTime[$j]} + $aux" | bc)
     done
-    for ((N=Ninicio ; N <= Nfinal ; N+=Npaso)); do
-        echo "\tfast, N: $N / $Nfinal..."
-        j=$(((N - Ninicio + Npaso)/Npaso))
+    for ((N=Ninicio, j=0; N <= Nfinal ; N+=Npaso, j++)); do
+        echo -e "\tfast, N: $N / $Nfinal..."
         aux=$(./fast $N | grep 'time' | awk '{print $3}')
-        fastTime[$j]=$(echo "$fastTime[%j] + $aux" | bc)
+        fastTime[$j]=$(echo "${fastTime[$j]} + $aux" | bc)
     done
 done
 
 for ((N=Ninicio ; N <= Nfinal ; N+=Npaso)); do
-    j=$(((N - Ninicio + Npaso)/Npaso))
-    slowTimeMean=$(echo "$slowTime[j]/$Iter" | bc)
-    fastTimeMean=$(echo "$fastTime[j]/$Iter" | bc)
+    slowTimeMean=$(echo "${slowTime[$j]}/$Iter" | bc)
+    fastTimeMean=$(echo "${fastTime[$j]}/$Iter" | bc)
     echo "$N	$slowTimeMean	$fastTimeMean" >> $fDAT
 done
 
