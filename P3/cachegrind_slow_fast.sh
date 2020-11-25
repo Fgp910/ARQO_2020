@@ -29,16 +29,16 @@ for i in $(seq $Ninicio $Npaso $Nfinal); do
 		valgrind --tool=cachegrind --cachegrind-out-file=$TempFile \
 		--I1=$(($L1size*$j)),$Nways,$LineSize --D1=$(($L1size*$j)),$Nways,$LineSize \
 		--LL=$MaxLsize,$Nways,$LineSize ./slow $i
-		D1mrs=$(cg_annotate $TempFile | head -n 30 | grep "PROGRAM TOTALS" | awk '{print $5}')
-		D1mws=$(cg_annotate $TempFile | head -n 30 | grep "PROGRAM TOTALS" | awk '{print $8}')
+		D1mrs=$(printf "%09d" $(cg_annotate $TempFile | head -n 30 | grep "PROGRAM TOTALS" | awk '{print $5}' | sed 's/,//g'))
+		D1mws=$(printf "%09d" $(cg_annotate $TempFile | head -n 30 | grep "PROGRAM TOTALS" | awk '{print $8}' | sed 's/,//g'))
 		rm -rf $TempFile
 		valgrind --tool=cachegrind --cachegrind-out-file=$TempFile \
 		--I1=$(($L1size*$j)),$Nways,$LineSize --D1=$(($L1size*$j)),$Nways,$LineSize \
 		--LL=$MaxLsize,$Nways,$LineSize ./fast $i
-		D1mrf=$(cg_annotate $TempFile | head -n 30 | grep "PROGRAM TOTALS" | awk '{print $5}')
-		D1mwf=$(cg_annotate $TempFile | head -n 30 | grep "PROGRAM TOTALS" | awk '{print $8}')
+		D1mrf=$(printf "%09d" $(cg_annotate $TempFile | head -n 30 | grep "PROGRAM TOTALS" | awk '{print $5}' | sed 's/,//g'))
+		D1mwf=$(printf "%09d" $(cg_annotate $TempFile | head -n 30 | grep "PROGRAM TOTALS" | awk '{print $8}' | sed 's/,//g'))
 		rm -rf $TempFile
-		echo "$i	$D1mrs	$D1mws	$D1mrf	$D1mwf" >> $fDAT$(($L1size*$j))".dat"
+		echo "$i	$D1mrs		$D1mws		$D1mrf		$D1mwf" >> $fDAT$(($L1size*$j))".dat"
 	done
 done
 
@@ -48,12 +48,13 @@ gnuplot << END_GNUPLOT
 set title "Fallos de memoria en lectura"
 set xlabel "Tamaño de la matriz"
 set ylabel "Número de fallos"
-set key right bottom
 set grid
 set term png
 set output "$f1PNG"
-plot for [tam in "1024 2048 4096 8192"] "$fDAT".tam.".dat" using 1:2 with lines lc "red" title "Cache ".tam."B slow", \
-	 for [tam in "1024 2048 4096 8192"] "$fDAT".tam.".dat" using 1:4 with lines lc "blue" title "Cache ".tam."B fast"
+plot "$fDAT"."1024.dat" u 1:2 w l lt rgb "#99000D" title "Cache 1024B slow", "$fDAT"."2048.dat" u 1:2 w l lt rgb "#CB181D" title "Cache 2048B slow", \
+     "$fDAT"."4096.dat" u 1:2 w l lt rgb "#EF3B2C" title "Cache 4096B slow", "$fDAT"."8192.dat" u 1:2 w l lt rgb "#FB6A4A" title "Cache 8192B slow", \
+     "$fDAT"."1024.dat" u 1:4 w l lt rgb "#0C2C84" title "Cache 1024B fast", "$fDAT"."2048.dat" u 1:4 w l lt rgb "#225EA8" title "Cache 8192B fast", \
+     "$fDAT"."4096.dat" u 1:4 w l lt rgb "#1D91C0" title "Cache 4096B fast", "$fDAT"."8192.dat" u 1:4 w l lt rgb "#41B6C4" title "Cache 8192B fast",
 replot
 quit
 END_GNUPLOT
@@ -62,12 +63,13 @@ gnuplot << END_GNUPLOT
 set title "Fallos de memoria en escritura"
 set xlabel "Tamaño de la matriz"
 set ylabel "Número de fallos"
-set key right bottom
 set grid
 set term png
 set output "$f2PNG"
-plot for [tam in "1024 2048 4096 8192"] "$fDAT".tam.".dat" using 1:3 with lines lc "red" title "Cache ".tam."B slow", \
-	 for [tam in "1024 2048 4096 8192"] "$fDAT".tam.".dat" using 1:5 with lines lc "blue" title "Cache ".tam."B fast"
+plot "$fDAT"."1024.dat" u 1:3 w l lt rgb "#99000D" title "Cache 1024B slow", "$fDAT"."2048.dat" u 1:3 w l lt rgb "#CB181D" title "Cache 2048B slow", \
+     "$fDAT"."4096.dat" u 1:3 w l lt rgb "#EF3B2C" title "Cache 4096B slow", "$fDAT"."8192.dat" u 1:3 w l lt rgb "#FB6A4A" title "Cache 8192B slow", \
+     "$fDAT"."1024.dat" u 1:5 w l lt rgb "#0C2C84" title "Cache 1024B fast", "$fDAT"."2048.dat" u 1:5 w l lt rgb "#225EA8" title "Cache 8192B fast", \
+     "$fDAT"."4096.dat" u 1:5 w l lt rgb "#1D91C0" title "Cache 4096B fast", "$fDAT"."8192.dat" u 1:5 w l lt rgb "#41B6C4" title "Cache 8192B fast",
 replot
 quit
 END_GNUPLOT
