@@ -1,4 +1,5 @@
-# Ejemplo script, para P3 arq 2019-2020
+# ARQO 2020-2021. Task 3: exercise 1
+# Script for times and plot generation (slow, fast)
 
 #!/bin/bash
 

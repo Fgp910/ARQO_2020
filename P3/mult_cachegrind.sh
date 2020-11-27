@@ -1,4 +1,4 @@
-# ARQO 2020-2021. Task 3: exercise 2
+# ARQO 2020-2021. Task 3: exercise 3
 # Script for cachegrind simulation and plot generation
 
 #!/bin/bash
