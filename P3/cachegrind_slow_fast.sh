@@ -45,9 +45,9 @@ done
 #Plot generation
 echo "Generating plots..."
 gnuplot << END_GNUPLOT
-set title "Fallos de memoria en lectura"
-set xlabel "Tamaño de la matriz"
-set ylabel "Número de fallos"
+set title "Read Cache Misses"
+set xlabel "Matrix Size"
+set ylabel "Number of Misses"
 set grid
 set term png
 set output "$f1PNG"
@@ -60,9 +60,9 @@ quit
 END_GNUPLOT
 
 gnuplot << END_GNUPLOT
-set title "Fallos de memoria en escritura"
-set xlabel "Tamaño de la matriz"
-set ylabel "Número de fallos"
+set title "Write Cache Misses"
+set xlabel "Matrix Size"
+set ylabel "Number of Misses"
 set grid
 set term png
 set output "$f2PNG"
