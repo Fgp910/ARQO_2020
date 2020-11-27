@@ -15,6 +15,7 @@ int main( int argc, char *argv[])
     int k;
 	tipo **A=NULL;
 	tipo **B=NULL;
+	tipo **Bt=NULL;
 	tipo **C=NULL;
 	struct timeval fin,ini;
 
