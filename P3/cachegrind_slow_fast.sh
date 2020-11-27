@@ -50,7 +50,8 @@ set title "Read Cache Misses"
 set xlabel "Matrix Size"
 set ylabel "Number of Misses"
 set grid
-set term png
+set term png size 960, 480
+set key outside right center
 set output "$f1PNG"
 plot "$fDAT"."1024.dat" u 1:2 w l lt rgb "#99000D" title "Cache 1024B slow", "$fDAT"."2048.dat" u 1:2 w l lt rgb "#CB181D" title "Cache 2048B slow", \
      "$fDAT"."4096.dat" u 1:2 w l lt rgb "#EF3B2C" title "Cache 4096B slow", "$fDAT"."8192.dat" u 1:2 w l lt rgb "#FB6A4A" title "Cache 8192B slow", \
@@ -65,7 +66,8 @@ set title "Write Cache Misses"
 set xlabel "Matrix Size"
 set ylabel "Number of Misses"
 set grid
-set term png
+set term png size 960, 480
+set key outside right center
 set output "$f2PNG"
 plot "$fDAT"."1024.dat" u 1:3 w l lt rgb "#99000D" title "Cache 1024B slow", "$fDAT"."2048.dat" u 1:3 w l lt rgb "#CB181D" title "Cache 2048B slow", \
      "$fDAT"."4096.dat" u 1:3 w l lt rgb "#EF3B2C" title "Cache 4096B slow", "$fDAT"."8192.dat" u 1:3 w l lt rgb "#FB6A4A" title "Cache 8192B slow", \
