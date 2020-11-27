@@ -23,7 +23,7 @@ int main( int argc, char *argv[])
 
 	if( argc!=2 )
 	{
-		printf("Error: ./%s <matrix size>\n", argv[0]);
+		printf("Error: %s <matrix size>\n", argv[0]);
 		return -1;
 	}
 	n=atoi(argv[1]);
@@ -61,7 +61,7 @@ int main( int argc, char *argv[])
     /* Actual multiplication*/
     for (i = 0; i < n; i++) {
         for (j = 0; j < n; j++) {
-            for (k = 0; k < n; j++) {
+            for (k = 0; k < n; k++) {
                 C[i][j] += A[i][k] * Bt[j][k];
             }
         }
