@@ -9,6 +9,7 @@ Ninicio=$((256 + 256 * $P))
 Npaso=32
 Nfinal=$((256 + 256 * ($P + 1)))
 Iter=3
+TempFile=temporary_file.dat
 fDAT=mult.dat
 fPNG_cache=mult_cache.png
 fPNG_time=mult_time.png
@@ -40,10 +41,24 @@ for ((i=1; i <= Iter; i++)); do
     done
 done
 
+echo "Running mult and mult_trans with cachegrind..."
 for ((N=Ninicio, j=0; N <= Nfinal ; N+=Npaso, j++)); do
     slowTimeMean=$(echo "${slowTime[$j]} / $Iter" | bc -l)
     fastTimeMean=$(echo "${fastTime[$j]} / $Iter" | bc -l)
-    echo "$N	$slowTimeMean	$fastTimeMean" >> $fDAT
+
+    echo "Beginning simulation for size $j matrix with regular algorithm..."
+    valgrind --tool=cachegrind --cachegrind-out-file=$TempFile ./mult $j
+    D1mrs=$(printf "%09d" $(cg_annotate $TempFile | head -n 30 | grep "PROGRAM TOTALS" | awk '{print $5}' | sed 's/,//g'))
+    D1mws=$(printf "%09d" $(cg_annotate $TempFile | head -n 30 | grep "PROGRAM TOTALS" | awk '{print $8}' | sed 's/,//g'))
+    rm -f $TempFile
+
+    echo "Beginning simulation for size $j matrix with transposed algorithm..."
+    valgrind --tool=cachegrind --cachegrind-out-file=$TempFile ./mult_trans $j
+    D1mrf=$(printf "%09d" $(cg_annotate $TempFile | head -n 30 | grep "PROGRAM TOTALS" | awk '{print $5}' | sed 's/,//g'))
+    D1mwf=$(printf "%09d" $(cg_annotate $TempFile | head -n 30 | grep "PROGRAM TOTALS" | awk '{print $8}' | sed 's/,//g'))
+    rm -f $TempFile
+
+    echo "$N	$slowTimeMean	$D1mrs	$D1mws	$fastTimeMean	$D1mrf	$D1mwf" >> $fDAT
 done
 
 echo "Generating plot..."
