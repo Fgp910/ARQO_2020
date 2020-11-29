@@ -8,7 +8,7 @@ P=5
 Ninicio=$((1000 + 1024 * $P))
 Npaso=64
 Nfinal=$((1000 + 1024 * ($P + 1)))
-Iter=3
+Iter=15
 fDAT=time_slow_fast.dat
 fPNG=time_slow_fast.png
 
