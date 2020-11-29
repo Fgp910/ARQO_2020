@@ -61,19 +61,35 @@ for ((N=Ninicio, j=0; N <= Nfinal ; N+=Npaso, j++)); do
     echo "$N	$slowTimeMean	$D1mrs	$D1mws	$fastTimeMean	$D1mrf	$D1mwf" >> $fDAT
 done
 
-echo "Generating plot..."
+echo "Generating plots..."
 # llamar a gnuplot para generar el gráfico y pasarle directamente por la entrada
 # estándar el script que está entre "<< END_GNUPLOT" y "END_GNUPLOT"
 gnuplot << END_GNUPLOT
-set title "Slow-Fast Execution Time"
+set title "Cache Misses"
+set xlabel "Matrix Size"
+set ylabel "Number of Misses"
+set grid
+set term png size 960, 480
+set key outside right center
+set output "$fPNG_cache"
+plot "$fDAT" using 1:3 w l lw 2 lt rgb "#FAAB00" title "Regular (read)", \
+     "$fDAT" using 1:4 w l lw 2 lt rgb "#FF2B0F" title "Regular (write)" \
+     "$fDAT" using 1:6 w l lw 2 lt rgb "#6C72D6" title "Transposed (read)", \
+     "$fDAT" using 1:7 w l lw 2 lt rgb "#003F5C" title "Transposed (write)"
+replot
+quit
+END_GNUPLOT
+
+gnuplot << END_GNUPLOT
+set title "Matrix Multiplication Execution Time"
 set ylabel "Execution time (s)"
 set xlabel "Matrix Size"
-set key right bottom
 set grid
-set term png
-set output "$fPNG"
-plot "$fDAT" using 1:2 with lines lw 2 title "mult", \
-     "$fDAT" using 1:3 with lines lw 2 title "mult_trans"
+set term png size 960, 480
+set key outside right center
+set output "$fPNG_time"
+plot "$fDAT" using 1:2 with lines lw 2 title "Regular", \
+     "$fDAT" using 1:5 with lines lw 2 title "Transposed"
 replot
 quit
 END_GNUPLOT
