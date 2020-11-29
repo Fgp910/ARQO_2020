@@ -53,14 +53,14 @@ set grid
 set term png size 960, 480
 set key outside right center
 set output "$f1PNG"
-plot "$fDAT"."1024.dat" u 1:2 w l lt rgb "#EDDA05" title "Cache 1024B slow", \
-     "$fDAT"."2048.dat" u 1:2 w l lt rgb "#FAAB00" title "Cache 2048B slow", \
-     "$fDAT"."4096.dat" u 1:2 w l lt rgb "#FF7600" title "Cache 4096B slow", \
-     "$fDAT"."8192.dat" u 1:2 w l lt rgb "#FF2B0F" title "Cache 8192B slow", \
-     "$fDAT"."1024.dat" u 1:4 w l lt rgb "#CD7DFF" title "Cache 1024B fast", \
-     "$fDAT"."2048.dat" u 1:4 w l lt rgb "#6C72D6" title "Cache 8192B fast", \
-     "$fDAT"."4096.dat" u 1:4 w l lt rgb "#1B5C9C" title "Cache 4096B fast", \
-     "$fDAT"."8192.dat" u 1:4 w l lt rgb "#003F5C" title "Cache 8192B fast",
+plot "$fDAT"."1024.dat" u 1:2 w l lw 2 lt rgb "#EDDA05" title "Cache 1024B slow", \
+     "$fDAT"."2048.dat" u 1:2 w l lw 2 lt rgb "#FAAB00" title "Cache 2048B slow", \
+     "$fDAT"."4096.dat" u 1:2 w l lw 2 lt rgb "#FF7600" title "Cache 4096B slow", \
+     "$fDAT"."8192.dat" u 1:2 w l lw 2 lt rgb "#FF2B0F" title "Cache 8192B slow", \
+     "$fDAT"."1024.dat" u 1:4 w l lw 2 lt rgb "#CD7DFF" title "Cache 1024B fast", \
+     "$fDAT"."2048.dat" u 1:4 w l lw 2 lt rgb "#6C72D6" title "Cache 8192B fast", \
+     "$fDAT"."4096.dat" u 1:4 w l lw 2 lt rgb "#1B5C9C" title "Cache 4096B fast", \
+     "$fDAT"."8192.dat" u 1:4 w l lw 2 lt rgb "#003F5C" title "Cache 8192B fast",
 replot
 quit
 END_GNUPLOT

@@ -52,9 +52,9 @@ gnuplot << END_GNUPLOT
 set title "Slow-Fast Execution Time"
 set ylabel "Execution time (s)"
 set xlabel "Matrix Size"
-set key right bottom
 set grid
-set term png
+set term png size 960, 480
+set key outside right center
 set output "$fPNG"
 plot "$fDAT" using 1:2 with lines lw 2 title "slow", \
      "$fDAT" using 1:3 with lines lw 2 title "fast"
