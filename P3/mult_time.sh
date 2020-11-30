@@ -8,7 +8,7 @@ P=5
 Ninicio=$((256 + 256 * $P))
 Npaso=32
 Nfinal=$((256 + 256 * ($P + 1)))
-Iter=3
+Iter=15
 TempFile=temporary_file.dat
 fDAT=mult.dat
 fPNG_cache=mult_cache.png
@@ -46,14 +46,14 @@ for ((N=Ninicio, j=0; N <= Nfinal ; N+=Npaso, j++)); do
     slowTimeMean=$(echo "${slowTime[$j]} / $Iter" | bc -l)
     fastTimeMean=$(echo "${fastTime[$j]} / $Iter" | bc -l)
 
-    echo "Beginning simulation for size $j matrix with regular algorithm..."
-    valgrind --tool=cachegrind --cachegrind-out-file=$TempFile ./mult $j
+    echo "Beginning simulation for size $N matrix with regular algorithm..."
+    valgrind --tool=cachegrind --cachegrind-out-file=$TempFile ./mult $N
     D1mrs=$(printf "%09d" $(cg_annotate $TempFile | head -n 30 | grep "PROGRAM TOTALS" | awk '{print $5}' | sed 's/,//g'))
     D1mws=$(printf "%09d" $(cg_annotate $TempFile | head -n 30 | grep "PROGRAM TOTALS" | awk '{print $8}' | sed 's/,//g'))
     rm -f $TempFile
 
-    echo "Beginning simulation for size $j matrix with transposed algorithm..."
-    valgrind --tool=cachegrind --cachegrind-out-file=$TempFile ./mult_trans $j
+    echo "Beginning simulation for size $N matrix with transposed algorithm..."
+    valgrind --tool=cachegrind --cachegrind-out-file=$TempFile ./mult_trans $N
     D1mrf=$(printf "%09d" $(cg_annotate $TempFile | head -n 30 | grep "PROGRAM TOTALS" | awk '{print $5}' | sed 's/,//g'))
     D1mwf=$(printf "%09d" $(cg_annotate $TempFile | head -n 30 | grep "PROGRAM TOTALS" | awk '{print $8}' | sed 's/,//g'))
     rm -f $TempFile
@@ -69,11 +69,12 @@ set title "Cache Misses"
 set xlabel "Matrix Size"
 set ylabel "Number of Misses"
 set grid
+set logscale y
 set term png size 960, 480
 set key outside right center
 set output "$fPNG_cache"
 plot "$fDAT" using 1:3 w l lw 2 lt rgb "#FAAB00" title "Regular (read)", \
-     "$fDAT" using 1:4 w l lw 2 lt rgb "#FF2B0F" title "Regular (write)" \
+     "$fDAT" using 1:4 w l lw 2 lt rgb "#FF2B0F" title "Regular (write)", \
      "$fDAT" using 1:6 w l lw 2 lt rgb "#6C72D6" title "Transposed (read)", \
      "$fDAT" using 1:7 w l lw 2 lt rgb "#003F5C" title "Transposed (write)"
 replot
