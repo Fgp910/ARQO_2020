@@ -18,7 +18,7 @@ f1PNG=asoc_lectura.png
 f2PNG=asoc_escritura.png
 
 # Removing previous files
-rm -rf Cachegrind/*
+rm -rf $fDAT*
 
 # Simulation
 echo "Simulating..."
