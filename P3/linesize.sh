@@ -53,14 +53,14 @@ set grid
 set term png size 960, 480
 set key outside right center
 set output "$f1PNG"
-plot "$fDAT"."32.dat" u 1:2 w l lw 2 lt rgb "#EDDA05" title "1-way associative regular", \
-     "$fDAT"."64.dat" u 1:2 w l lw 2 lt rgb "#FAAB00" title "2-way associative regular", \
-     "$fDAT"."128.dat" u 1:2 w l lw 2 lt rgb "#FF7600" title "4-way associative regular", \
-     "$fDAT"."256.dat" u 1:2 w l lw 2 lt rgb "#FF2B0F" title "8-way associative regular", \
-     "$fDAT"."32.dat" u 1:4 w l lw 2 lt rgb "#CD7DFF" title "1-way associative transposed", \
-     "$fDAT"."64.dat" u 1:4 w l lw 2 lt rgb "#6C72D6" title "2-way associative transposed", \
-     "$fDAT"."128.dat" u 1:4 w l lw 2 lt rgb "#1B5C9C" title "4-way associative transposed", \
-     "$fDAT"."256.dat" u 1:4 w l lw 2 lt rgb "#003F5C" title "8-way associative transposed",
+plot "$fDAT"."32.dat" u 1:2 w l lw 2 lt rgb "#EDDA05" title "32B line regular", \
+     "$fDAT"."64.dat" u 1:2 w l lw 2 lt rgb "#FAAB00" title "64B line regular", \
+     "$fDAT"."128.dat" u 1:2 w l lw 2 lt rgb "#FF7600" title "128B line regular", \
+     "$fDAT"."256.dat" u 1:2 w l lw 2 lt rgb "#FF2B0F" title "256B line regular", \
+     "$fDAT"."32.dat" u 1:4 w l lw 2 lt rgb "#CD7DFF" title "32B line transposed", \
+     "$fDAT"."64.dat" u 1:4 w l lw 2 lt rgb "#6C72D6" title "64B line transposed", \
+     "$fDAT"."128.dat" u 1:4 w l lw 2 lt rgb "#1B5C9C" title "128B line transposed", \
+     "$fDAT"."256.dat" u 1:4 w l lw 2 lt rgb "#003F5C" title "256B line transposed",
 replot
 quit
 END_GNUPLOT
@@ -73,14 +73,14 @@ set grid
 set term png size 960, 480
 set key outside right center
 set output "$f2PNG"
-plot "$fDAT"."32.dat" u 1:3 w l lw 2 lt rgb "#EDDA05" title "1-way associative regular", \
-     "$fDAT"."64.dat" u 1:3 w l lw 2 lt rgb "#FAAB00" title "2-way associative regular", \
-     "$fDAT"."128.dat" u 1:3 w l lw 2 lt rgb "#FF7600" title "4-way associative regular", \
-     "$fDAT"."256.dat" u 1:3 w l lw 2 lt rgb "#FF2B0F" title "8-way associative regular", \
-     "$fDAT"."32.dat" u 1:5 w l lw 2 lt rgb "#CD7DFF" title "1-way associative transposed", \
-     "$fDAT"."64.dat" u 1:5 w l lw 2 lt rgb "#6C72D6" title "2-way associative transposed", \
-     "$fDAT"."128.dat" u 1:5 w l lw 2 lt rgb "#1B5C9C" title "4-way associative transposed", \
-     "$fDAT"."256.dat" u 1:5 w l lw 2 lt rgb "#003F5C" title "8-way associative transposed",
+plot "$fDAT"."32.dat" u 1:3 w l lw 2 lt rgb "#EDDA05" title "32B line regular", \
+     "$fDAT"."64.dat" u 1:3 w l lw 2 lt rgb "#FAAB00" title "64B line regular", \
+     "$fDAT"."128.dat" u 1:3 w l lw 2 lt rgb "#FF7600" title "128B line regular", \
+     "$fDAT"."256.dat" u 1:3 w l lw 2 lt rgb "#FF2B0F" title "256B line regular", \
+     "$fDAT"."32.dat" u 1:5 w l lw 2 lt rgb "#CD7DFF" title "32B line transposed", \
+     "$fDAT"."64.dat" u 1:5 w l lw 2 lt rgb "#6C72D6" title "64B line transposed", \
+     "$fDAT"."128.dat" u 1:5 w l lw 2 lt rgb "#1B5C9C" title "128B line transposed", \
+     "$fDAT"."256.dat" u 1:5 w l lw 2 lt rgb "#003F5C" title "256B line transposed",
 replot
 quit
 END_GNUPLOT
