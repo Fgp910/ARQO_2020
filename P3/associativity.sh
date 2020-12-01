@@ -5,13 +5,13 @@
 
 
 P=5
-Ninicio=$((256 + $P * 256))
-Nfinal=$((256 + ($P + 1) * 256))
-Npaso=32
+Ninicio=$((128 + $P * 128))
+Nfinal=$((128 + ($P + 1) * 128))
+Npaso=16
 fDAT="Cachegrind/assoc_"
-L1size=2048
+L1size=$((1024*32))
 MaxLsize=$((8*1024*1024))
-LineSize=32
+LineSize=64
 K=8
 TempFile=temporary_file.dat
 f1PNG=asoc_lectura.png
@@ -30,14 +30,14 @@ for i in $(seq $Ninicio $Npaso $Nfinal); do
 		valgrind --tool=cachegrind --cachegrind-out-file=$TempFile \
 		--I1=$L1size,$j,$LineSize --D1=$L1size,$j,$LineSize \
 		--LL=$MaxLsize,$j,$LineSize ./mult $i
-		D1mrs=$(printf "%09d" $(cg_annotate $TempFile | head -n 30 | grep "PROGRAM TOTALS" | awk '{print $5}' | sed 's/,//g'))
-		D1mws=$(printf "%09d" $(cg_annotate $TempFile | head -n 30 | grep "PROGRAM TOTALS" | awk '{print $8}' | sed 's/,//g'))
+		D1mrs=$(printf "%10d" $(cg_annotate $TempFile | head -n 30 | grep "PROGRAM TOTALS" | awk '{print $5}' | sed 's/,//g'))
+		D1mws=$(printf "%10d" $(cg_annotate $TempFile | head -n 30 | grep "PROGRAM TOTALS" | awk '{print $8}' | sed 's/,//g'))
 		rm -rf $TempFile
 		valgrind --tool=cachegrind --cachegrind-out-file=$TempFile \
 		--I1=$L1size,$j,$LineSize --D1=$L1size,$j,$LineSize \
 		--LL=$MaxLsize,$j,$LineSize ./mult_trans $i
-		D1mrf=$(printf "%09d" $(cg_annotate $TempFile | head -n 30 | grep "PROGRAM TOTALS" | awk '{print $5}' | sed 's/,//g'))
-		D1mwf=$(printf "%09d" $(cg_annotate $TempFile | head -n 30 | grep "PROGRAM TOTALS" | awk '{print $8}' | sed 's/,//g'))
+		D1mrf=$(printf "%10d" $(cg_annotate $TempFile | head -n 30 | grep "PROGRAM TOTALS" | awk '{print $5}' | sed 's/,//g'))
+		D1mwf=$(printf "%10d" $(cg_annotate $TempFile | head -n 30 | grep "PROGRAM TOTALS" | awk '{print $8}' | sed 's/,//g'))
 		rm -rf $TempFile
 		echo "$i	$D1mrs		$D1mws		$D1mrf		$D1mwf" >> $fDAT$j".dat"
 	done
