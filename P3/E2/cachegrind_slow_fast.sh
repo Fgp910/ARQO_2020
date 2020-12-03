@@ -7,7 +7,7 @@ P=5
 Ninicio=$((2000 + $P * 512))
 Nfinal=$((2000 + ($P + 1) * 512))
 Npaso=64
-fDAT="../Cachegrind/cache_"
+fDAT="cache_"
 L1size=1024
 NL1=8
 MaxLsize=$((8*1024*1024))
@@ -22,7 +22,6 @@ rm -rf $fDAT*
 
 # Simulation
 echo "Simulating..."
-mkdir ../Cachegrind -p
 
 for i in $(seq $Ninicio $Npaso $Nfinal); do
 	echo "Beginning simulation for size $i matrix with slow algorithm..."

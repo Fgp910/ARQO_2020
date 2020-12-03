@@ -8,7 +8,7 @@ P=5
 Ninicio=$((128 + $P * 128))
 Nfinal=$((128 + ($P + 1) * 128))
 Npaso=16
-fDAT="../Cachegrind/assoc_"
+fDAT="assoc_"
 L1size=$((1024*32))
 MaxLsize=$((8*1024*1024))
 LineSize=64
@@ -22,7 +22,6 @@ rm -rf $fDAT*
 
 # Simulation
 echo "Simulating..."
-mkdir ../Cachegrind -p
 
 for i in $(seq $Ninicio $Npaso $Nfinal); do
 	echo "Beginning simulation for size $i matrix with regular algorithm..."
