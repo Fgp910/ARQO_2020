@@ -31,12 +31,12 @@ for ((i=1; i <= Iter; i++)); do
     echo "I: $i / $Iter..."
     for ((N=Ninicio, j=0; N <= Nfinal ; N+=Npaso, j++)); do
         echo -e "\tmult, N: $N / $Nfinal..."
-        aux=$(./mult $N | grep 'time' | awk '{print $3}')
+        aux=$(./../mult $N | grep 'time' | awk '{print $3}')
         slowTime[$j]=$(echo "${slowTime[$j]} + $aux" | bc)
     done
     for ((N=Ninicio, j=0; N <= Nfinal ; N+=Npaso, j++)); do
         echo -e "\tmult_trans, N: $N / $Nfinal..."
-        aux=$(./mult_trans $N | grep 'time' | awk '{print $3}')
+        aux=$(./../mult_trans $N | grep 'time' | awk '{print $3}')
         fastTime[$j]=$(echo "${fastTime[$j]} + $aux" | bc)
     done
 done
@@ -47,13 +47,13 @@ for ((N=Ninicio, j=0; N <= Nfinal ; N+=Npaso, j++)); do
     fastTimeMean=$(echo "${fastTime[$j]} / $Iter" | bc -l)
 
     echo "Beginning simulation for size $N matrix with regular algorithm..."
-    valgrind --tool=cachegrind --cachegrind-out-file=$TempFile ./mult $N
+    valgrind --tool=cachegrind --cachegrind-out-file=$TempFile ./../mult $N
     D1mrs=$(printf "%09d" $(cg_annotate $TempFile | head -n 30 | grep "PROGRAM TOTALS" | awk '{print $5}' | sed 's/,//g'))
     D1mws=$(printf "%09d" $(cg_annotate $TempFile | head -n 30 | grep "PROGRAM TOTALS" | awk '{print $8}' | sed 's/,//g'))
     rm -f $TempFile
 
     echo "Beginning simulation for size $N matrix with transposed algorithm..."
-    valgrind --tool=cachegrind --cachegrind-out-file=$TempFile ./mult_trans $N
+    valgrind --tool=cachegrind --cachegrind-out-file=$TempFile ./../mult_trans $N
     D1mrf=$(printf "%09d" $(cg_annotate $TempFile | head -n 30 | grep "PROGRAM TOTALS" | awk '{print $5}' | sed 's/,//g'))
     D1mwf=$(printf "%09d" $(cg_annotate $TempFile | head -n 30 | grep "PROGRAM TOTALS" | awk '{print $8}' | sed 's/,//g'))
     rm -f $TempFile

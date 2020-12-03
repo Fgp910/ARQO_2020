@@ -29,12 +29,12 @@ for ((i=1; i <= Iter; i++)); do
     echo "I: $i / $Iter..."
     for ((N=Ninicio, j=0; N <= Nfinal ; N+=Npaso, j++)); do
         echo -e "\tslow, N: $N / $Nfinal..."
-        aux=$(./slow $N | grep 'time' | awk '{print $3}')
+        aux=$(./../slow $N | grep 'time' | awk '{print $3}')
         slowTime[$j]=$(echo "${slowTime[$j]} + $aux" | bc)
     done
     for ((N=Ninicio, j=0; N <= Nfinal ; N+=Npaso, j++)); do
         echo -e "\tfast, N: $N / $Nfinal..."
-        aux=$(./fast $N | grep 'time' | awk '{print $3}')
+        aux=$(./../fast $N | grep 'time' | awk '{print $3}')
         fastTime[$j]=$(echo "${fastTime[$j]} + $aux" | bc)
     done
 done

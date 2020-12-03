@@ -29,13 +29,13 @@ for i in $(seq $Ninicio $Npaso $Nfinal); do
 	for ((j=32; j<=$K; j*=2)); do
 		valgrind --tool=cachegrind --cachegrind-out-file=$TempFile \
 		--I1=$L1size,$NWays,$j --D1=$L1size,$NWays,$j \
-		--LL=$MaxLsize,$NWays,$j ./mult $i
+		--LL=$MaxLsize,$NWays,$j ./../mult $i
 		D1mrs=$(printf "%10d" $(cg_annotate $TempFile | head -n 30 | grep "PROGRAM TOTALS" | awk '{print $5}' | sed 's/,//g'))
 		D1mws=$(printf "%10d" $(cg_annotate $TempFile | head -n 30 | grep "PROGRAM TOTALS" | awk '{print $8}' | sed 's/,//g'))
 		rm -rf $TempFile
 		valgrind --tool=cachegrind --cachegrind-out-file=$TempFile \
 		--I1=$L1size,$NWays,$j --D1=$L1size,$NWays,$j \
-		--LL=$MaxLsize,$NWays,$j ./mult_trans $i
+		--LL=$MaxLsize,$NWays,$j ./../mult_trans $i
 		D1mrf=$(printf "%10d" $(cg_annotate $TempFile | head -n 30 | grep "PROGRAM TOTALS" | awk '{print $5}' | sed 's/,//g'))
 		D1mwf=$(printf "%10d" $(cg_annotate $TempFile | head -n 30 | grep "PROGRAM TOTALS" | awk '{print $8}' | sed 's/,//g'))
 		rm -rf $TempFile
