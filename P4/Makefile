@@ -19,7 +19,7 @@ pescalar_par1: pescalar_par1.c arqo4.c
 	gcc $(FLAGS) $(LIB_DIR) -o $@ $^ $(LIBS)
 
 edgeDetector: edgeDetector.c stb_image_write.h stb_image.h
-	gcc $(FLAGS) -std=gnu99 $(LIB_DIR) -o $@ edgeDetector.c $(LIBS)
+	gcc $(FLAGS) -std=gnu99 $(LIB_DIR) -o $@ edgeDetector.c $(LIBS) -lm
 
 stb_image.h:
 	@echo "Los ficheros de cabecera de stb se deberían descarga automáticamente"
