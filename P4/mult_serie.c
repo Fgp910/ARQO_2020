@@ -5,7 +5,7 @@
 
 #include "arqo4.h"
 
-int mainCleanUp(tipo**, tipo**, tipo**, int);
+int mainCleanUp(float**, float**, float**, int);
 
 int main(int argc, char *argv[])
 {
@@ -13,12 +13,12 @@ int main(int argc, char *argv[])
     int i;
     int j;
     int k;
-    tipo **A = NULL;
-    tipo **B = NULL;
-    tipo **C = NULL;
+    float **A = NULL;
+    float **B = NULL;
+    float **C = NULL;
     struct timeval fin,ini;
 
-    printf("Word size: %ld bits\n",8*sizeof(tipo));
+    printf("Word size: %ld bits\n",8*sizeof(float));
 
     if(argc!=2)
     {
@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
     return mainCleanUp(A, B, C, 0);
 }
 
-int mainCleanUp(tipo** A, tipo** B, tipo** C, int retVal) {
+int mainCleanUp(float** A, float** B, float** C, int retVal) {
     if (A) free(A);
     if (B) free(B);
     if (C) free(C);
