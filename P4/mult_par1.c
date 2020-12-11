@@ -48,6 +48,7 @@ int main(int argc, char *argv[])
     /* Main computation */
     for (i = 0; i < n; i++) {
         for (j = 0; j < n; j++) {
+            #pragma omp parallel for
             for (k = 0; k < n; k++) {
                 C[i][j] += A[i][k] * B[k][j];
             }

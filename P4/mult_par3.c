@@ -46,6 +46,7 @@ int main(int argc, char *argv[])
     gettimeofday(&ini,NULL);
 
     /* Main computation */
+    #pragma omp parallel for private (j,k)
     for (i = 0; i < n; i++) {
         for (j = 0; j < n; j++) {
             for (k = 0; k < n; k++) {
