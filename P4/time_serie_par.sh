@@ -4,6 +4,7 @@
 
 # Variables
 C=
+M=$(2*$C)
 NInicio=
 NPaso=
 NFinal=
@@ -12,7 +13,9 @@ fDat=timeSeriePar.dat
 
 # Execution block
 unset tSerie
-unset tPar
+for k in $(seq 2 1 $M); do
+    unset tPar$k
+done
 for i in $(seq $Ninicio $Npaso $Nfinal); do tSerie+=(0); done
 for i in $(seq $Ninicio $Npaso $Nfinal); do tPar+=(0); done
 for ((i=1; i<=$Iter; i++)); do
@@ -20,15 +23,21 @@ for ((i=1; i<=$Iter; i++)); do
     for ((j=0, N=$NInicio; N<=$NFinal; j+=1, N+=$NPaso)); do
         aux=$(./pescalar_serie $N | grep 'Tiempo:' | awk '{print $2}')
         tSerie[$j]=$(echo "${tSerie[$j]} + $aux" | bc)
-        aux=$(./pescalar_par3 $N | grep 'Tiempo:' | awk '{print $2}')
-        tPar[$j]=$(echo "${tPar[$j]} + $aux" | bc)
+        for k in $(seq 2 1 $M); do
+            export OMP_NUM_THREADS=$k
+            aux=$(./pescalar_par3 $N | grep 'Tiempo:' | awk '{print $2}')
+            tPar$k[$j]=$(echo "${tPar$k[$j]} + $aux" | bc)
+        done
     done
 done
 
 for ((j=0, N=$NInicio; N<=$NFinal; j+=1, N+=$NPaso)); do
     serieMean=$(echo "${tSerie[$j]}  / $Iter" | bc -l)
-    parMean=$(echo "${tPar[$j]}  / $Iter" | bc -l)
-    echo "$N    $serieMean    $parMean" >> $fDat
+    str="$N    $serieMean"
+    for k in $(seq 2 1 $M); do
+        parMean=$(echo "${tPar$k[$j]}  / $Iter" | bc -l)
+        str=str+"   $parMean"
+    done
 done
 
 # Plot generation
@@ -40,7 +49,7 @@ set ylabel "Time (s)"
 set grid 
 set term PNG
 set output "pescalar.png"
-plot 
+plot "$fDat" u 1:2 w l 
 replot
 quit
 END_GNUPLOT
