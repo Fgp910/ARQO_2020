@@ -36,7 +36,7 @@ for ((j=0, N=$NInicio; N<=$NFinal; j+=1, N+=$NPaso)); do
     str="$N    $serieMean"
     for k in $(seq 2 1 $M); do
         parMean=$(echo "${tPar$k[$j]}  / $Iter" | bc -l)
-        str=str+"   $parMean"
+        str=$str+"   $parMean"
     done
 done
 
@@ -49,7 +49,8 @@ set ylabel "Time (s)"
 set grid 
 set term PNG
 set output "pescalar.png"
-plot "$fDat" u 1:2 w l 
+plot "$fDat" u 1:2 w l title "Serial", \
+     for [i=2:$M] "$fDat" u 1:($1+i) w l title i." threads"
 replot
 quit
 END_GNUPLOT
