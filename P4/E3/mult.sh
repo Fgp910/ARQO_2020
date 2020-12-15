@@ -1,63 +1,78 @@
-# ARQO 2020-2021. Task 3: exercise 1
-# Script for times and plot generation (slow, fast)
+# ARQO 2020-2021. Task 4: exercise 3
+# Script for times, speedup and plot generation (mult_serie, mult_par3)
 
 #!/bin/bash
 
 # inicializar variables
-P=5
-Ninicio=$((1000 + 1024 * $P))
+P=1
+Ninicio=$((512 * $P))
 Npaso=64
-Nfinal=$((1000 + 1024 * ($P + 1)))
-Iter=15
-fDAT=time_slow_fast.dat
-fPNG=time_slow_fast.png
+Nfinal=$((1024 + 512 * $P))
+Iter=3
+fDAT=mult.dat
+fTimePNG=mult_time.png
+fSpeedupPNG=mult_speedup.png
 
-# borrar el fichero DAT y el fichero PNG
-rm -f $fDAT $fPNG
+# borrar el fichero DAT y los ficheros PNG
+rm -f $fDAT $fTimePNG $fSpeedupPNG
 
 # generar el fichero DAT vacío
 touch $fDAT
 
-echo "Running slow and fast..."
+echo "Running mult_serie and mult_par3..."
 # bucle para N desde P hasta Q 
 #for N in $(seq $Ninicio $Npaso $Nfinal);
-unset slowTime
-unset fastTime
-for i in $(seq $Ninicio $Npaso $Nfinal); do slowTime+=(0); done
-for i in $(seq $Ninicio $Npaso $Nfinal); do fastTime+=(0); done
+unset serieTime
+unset parTime
+for i in $(seq $Ninicio $Npaso $Nfinal); do serieTime+=(0); done
+for i in $(seq $Ninicio $Npaso $Nfinal); do parTime+=(0); done
+export OMP_NUM_THREADS=4
 for ((i=1; i <= Iter; i++)); do
     echo "I: $i / $Iter..."
     for ((N=Ninicio, j=0; N <= Nfinal ; N+=Npaso, j++)); do
-        echo -e "\tslow, N: $N / $Nfinal..."
-        aux=$(./../slow $N | grep 'time' | awk '{print $3}')
-        slowTime[$j]=$(echo "${slowTime[$j]} + $aux" | bc)
+        echo -e "\tserie, N: $N / $Nfinal..."
+        aux=$(./../mult_serie $N | grep 'time' | awk '{print $3}')
+        serieTime[$j]=$(echo "${serieTime[$j]} + $aux" | bc)
     done
     for ((N=Ninicio, j=0; N <= Nfinal ; N+=Npaso, j++)); do
-        echo -e "\tfast, N: $N / $Nfinal..."
-        aux=$(./../fast $N | grep 'time' | awk '{print $3}')
-        fastTime[$j]=$(echo "${fastTime[$j]} + $aux" | bc)
+        echo -e "\tpar, N: $N / $Nfinal..."
+        aux=$(./../mult_par3 $N | grep 'time' | awk '{print $3}')
+        parTime[$j]=$(echo "${parTime[$j]} + $aux" | bc)
     done
 done
 
 for ((N=Ninicio, j=0; N <= Nfinal ; N+=Npaso, j++)); do
-    slowTimeMean=$(echo "${slowTime[$j]} / $Iter" | bc -l)
-    fastTimeMean=$(echo "${fastTime[$j]} / $Iter" | bc -l)
-    echo "$N	$slowTimeMean	$fastTimeMean" >> $fDAT
+    serieTimeMean=$(echo "${serieTime[$j]} / $Iter" | bc -l)
+    parTimeMean=$(echo "${parTime[$j]} / $Iter" | bc -l)
+    speedup=$(echo "$serieTimeMean / $parTimeMean" | bc -l)
+    echo -e "$N\t $serieTimeMean\t $parTimeMean\t $speedup" >> $fDAT
 done
 
 echo "Generating plot..."
 # llamar a gnuplot para generar el gráfico y pasarle directamente por la entrada
 # estándar el script que está entre "<< END_GNUPLOT" y "END_GNUPLOT"
 gnuplot << END_GNUPLOT
-set title "Slow-Fast Execution Time"
+set title "Matrix Multiplication Execution Time"
 set ylabel "Execution time (s)"
 set xlabel "Matrix Size"
 set grid
 set term png size 960, 480
 set key outside right center
-set output "$fPNG"
-plot "$fDAT" using 1:2 with lines lw 2 title "slow", \
-     "$fDAT" using 1:3 with lines lw 2 title "fast"
+set output "$fTimePNG"
+plot "$fDAT" using 1:2 with lines lw 2 title "Series", \
+     "$fDAT" using 1:3 with lines lw 2 title "Parallel"
+replot
+quit
+END_GNUPLOT
+gnuplot << END_GNUPLOT
+set title "Matrix Multiplication Speedup"
+set ylabel "Speedup"
+set xlabel "Matrix Size"
+set grid
+set term png size 960, 480
+set key outside right center
+set output "$fSpeedupPNG"
+plot "$fDAT" using 1:4 with lines lw 2 title "Parallel (vs series)"
 replot
 quit
 END_GNUPLOT

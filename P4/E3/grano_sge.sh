@@ -2,7 +2,7 @@
 #
 #$ -S /bin/bash
 #$ -cwd
-#$ -o grano_omp.out
+#$ -o grano_sge.out
 #$ -j y
 #$ -pe openmp 4
 
