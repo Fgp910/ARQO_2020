@@ -26,7 +26,7 @@ for ((i=1; i <= Iter; i++)); do
     serieTime=$(echo "$serieTime + $aux" | bc)
 done
 serieTimeMean=$(echo "$serieTime / $Iter" | bc -l)
-echo "$serieTime" >> $fTime
+echo $serieTimeMean >> $fTime
 
 echo "Running mult_par*..."
 unset par1Time
