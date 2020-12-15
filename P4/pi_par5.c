@@ -21,7 +21,7 @@ int main( int argc, char *argv[] )
 
 	h = 1.0 / (double)n;
 	
-	#pragma omp parallel private(x, sum) default(shared)
+	#pragma omp parallel private(i, x, sum) default(shared)
 	{
 		int tid, numThreads;
 
