@@ -14,6 +14,7 @@ int main(int argc, char *argv[])
     int i;
     int j;
     int k;
+    float sum;
     float **A = NULL;
     float **B = NULL;
     float **C = NULL;
@@ -46,12 +47,14 @@ int main(int argc, char *argv[])
     gettimeofday(&ini,NULL);
 
     /* Main computation */
-    #pragma omp parallel for private (j,k)
+    #pragma omp parallel for private (j,k,sum)
     for (i = 0; i < n; i++) {
         for (j = 0; j < n; j++) {
+            sum = 0;
             for (k = 0; k < n; k++) {
-                C[i][j] += A[i][k] * B[k][j];
+                sum += A[i][k] * B[k][j];
             }
+            C[i][j] = sum;
         }
     }
     /* End of computation */

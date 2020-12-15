@@ -33,10 +33,10 @@ int main(int argc, char **argv[])
         return -1;
     }
 
-        nproc=omp_get_num_procs();
-        omp_set_num_threads(nproc);
+    nproc=omp_get_num_procs();
+    omp_set_num_threads(nproc);
 
-        printf("Se han lanzado %d hilos.\n",nproc);
+    printf("Se han lanzado %d hilos.\n",nproc);
 
     gettimeofday(&ini,NULL);
     /* Bloque de computo */
