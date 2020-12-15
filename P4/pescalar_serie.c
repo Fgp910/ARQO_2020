@@ -6,15 +6,23 @@
 #include <stdlib.h>
 #include "arqo4.h"
 
-int main(void)
+int main(int argc, char **argv[])
 {
 	float *A=NULL, *B=NULL;
 	long long k=0;
 	struct timeval fin,ini;
 	double sum=0;
-	
-	A = generateVectorOne(M);
-	B = generateVectorOne(M);
+	int n;
+
+    if (argc == 2) {
+        n = atoi(argv[1]);
+    }
+    else {
+        n = M;
+    }
+
+    A = generateVectorOne(n);
+    B = generateVectorOne(n);
 	if ( !A || !B )
 	{
 		printf("Error when allocationg matrix\n");
