@@ -5,10 +5,10 @@
 
 # inicializar variables
 P=1
-N=10
+N=1500
 Hinicio=1
 Hfinal=4
-Iter=5
+Iter=3
 fTime=grano_time.dat
 fSpeed=grano_speedup.dat
 
@@ -42,9 +42,9 @@ for ((H=Hinicio, j=0; H <= Hfinal ; H++, j++)); do
         echo "I: $i / $Iter..."
         aux=$(./../mult_par1 $N | grep 'time' | awk '{print $3}')
         par1Time[$j]=$(echo "${par1Time[$j]} + $aux" | bc)
-        aux=$(./../mult_par1 $N | grep 'time' | awk '{print $3}')
+        aux=$(./../mult_par2 $N | grep 'time' | awk '{print $3}')
         par2Time[$j]=$(echo "${par2Time[$j]} + $aux" | bc)
-        aux=$(./../mult_par1 $N | grep 'time' | awk '{print $3}')
+        aux=$(./../mult_par3 $N | grep 'time' | awk '{print $3}')
         par3Time[$j]=$(echo "${par3Time[$j]} + $aux" | bc)
     done
 done
@@ -59,9 +59,9 @@ for ((H=Hinicio, j=0; H <= Hfinal ; H++, j++)); do
     par1Time[$j]=$(echo "${par1Time[$j]} / $Iter" | bc -l)
     par2Time[$j]=$(echo "${par2Time[$j]} / $Iter" | bc -l)
     par3Time[$j]=$(echo "${par3Time[$j]} / $Iter" | bc -l)
-    par1Speed[$j]=$(echo "$serieTime / ${par1Time[$j]}" | bc -l)
-    par2Speed[$j]=$(echo "$serieTime / ${par2Time[$j]}" | bc -l)
-    par3Speed[$j]=$(echo "$serieTime / ${par3Time[$j]}" | bc -l)
+    par1Speed[$j]=$(echo "$serieTimeMean / ${par1Time[$j]}" | bc -l)
+    par2Speed[$j]=$(echo "$serieTimeMean / ${par2Time[$j]}" | bc -l)
+    par3Speed[$j]=$(echo "$serieTimeMean / ${par3Time[$j]}" | bc -l)
 done
 
 echo ${par1Time[@]} >> $fTime
