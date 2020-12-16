@@ -5,10 +5,10 @@
 
 # inicializar variables
 P=1
-N=1500
+N=2000
 Hinicio=1
 Hfinal=4
-Iter=3
+Iter=1
 fTime=grano_time.dat
 fSpeed=grano_speedup.dat
 
