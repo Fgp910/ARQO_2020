@@ -34,7 +34,7 @@ int main(int argc, char **argv[])
 	gettimeofday(&ini,NULL);
 	/* Bloque de computo */
 	sum = 0;
-	for(k=0;k<M;k++)
+	for(k=0;k<n;k++)
 	{
 		sum = sum + A[k]*B[k];
 	}

@@ -7,20 +7,21 @@
 #include <stdlib.h>
 #include "arqo4.h"
 
-int main(int argc, char **argv[])
+int main(int argc, char **argv)
 {
-    int nproc;
     float *A=NULL, *B=NULL;
     long long k=0;
     struct timeval fin,ini;
     double sum=0;
-    int n;
+    int n, nproc;
 
-    if (argc == 2) {
+    if (argc == 3) {
         n = atoi(argv[1]);
+        nproc = atoi(argv[2]);
     }
     else {
         n = M;
+        nproc = 2;
     }
 
     A = generateVectorOne(n);
@@ -33,17 +34,14 @@ int main(int argc, char **argv[])
         return -1;
     }
 
-    nproc=omp_get_num_procs();
     omp_set_num_threads(nproc);
-
-    printf("Se han lanzado %d hilos.\n",nproc);
 
     gettimeofday(&ini,NULL);
     /* Bloque de computo */
     sum = 0;
 
     #pragma omp parallel for reduction(+:sum)
-    for(k=0;k<M;k++)
+    for(k=0;k<n;k++)
     {
         sum = sum + A[k]*B[k];
     }
