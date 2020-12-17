@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include "arqo4.h"
 
-int main(int argc, char **argv[])
+int main(int argc, char *argv[])
 {
 	float *A=NULL, *B=NULL;
 	long long k=0;
