@@ -7,12 +7,11 @@
 P=1
 Ninicio=$((512 * $P))
 Npaso=64
-#Nfinal=$((1024 + 512 * $P))
 Nfinal=1856
-Iter=3
-fDAT=mult.dat
-fTimePNG=mult_time.png
-fSpeedupPNG=mult_speedup.png
+Iter=1
+fDAT=mult_local.dat
+fTimePNG=mult_time_local.png
+fSpeedupPNG=mult_speedup_local.png
 
 # borrar el fichero DAT y los ficheros PNG
 rm -f $fDAT $fTimePNG $fSpeedupPNG
@@ -50,7 +49,7 @@ done
 for ((N=Ninicio, j=0; N <= Nfinal ; N+=Npaso, j++)); do
     serieTimeMean=$(echo "${serieTime[$j]} / $Iter" | bc -l)
     parTimeMean=$(echo "${parTime[$j]} / $Iter" | bc -l)
-    speedup=$(echo "e( l(${speedupAcum[$j]}) / $Iter )" | bc -l) #Media geométrica
+    speedup=$(echo "$serieTimeMean / $parTimeMean" | bc -l)
     echo -e "$N\t $serieTimeMean\t $parTimeMean\t $speedup" >> $fDAT
 done
 
