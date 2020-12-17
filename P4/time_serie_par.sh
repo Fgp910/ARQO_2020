@@ -5,10 +5,10 @@
 # Variables
 C=4
 M=$((2 * $C))
-NInicio=5000000
-NPaso=6000000
-NFinal=40000000
-Iter=4
+NInicio=10000000
+NPaso=15000000
+NFinal=100000000
+Iter=10
 fDat=timeSeriePar.dat
 
 # Execution block
@@ -26,7 +26,7 @@ for ((i=1; i<=$Iter; i++)); do
         for k in $(seq 0 1 $(($M-2))); do
             export OMP_NUM_THREADS=$(($k + 2))
             aux=$(./pescalar_par3 $N $(($k + 2)) | grep 'Tiempo:' | awk '{print $2}')
-            tPar[$((($j - 1)*($M - 1) + $k))]=$(echo "${tPar[$((($j - 1)*($M - 1) + $k))]} + $aux" | bc)
+            tPar[$(($j*($M - 1) + $k))]=$(echo "${tPar[$(($j*($M - 1) + $k))]} + $aux" | bc)
         done
     done
 done
@@ -35,8 +35,8 @@ rm -rf $fDat
 for ((j=0, N=$NInicio; N<=$NFinal; j+=1, N+=$NPaso)); do
     serieMean=$(echo "${tSerie[$j]}  / $Iter" | bc -l)
     str="$N    $serieMean"
-    for k in $(seq 2 1 $M); do
-        parMean=$(echo "${tPar[$((($j - 1)*($M - 1) + $k))]}  / $Iter" | bc -l)
+    for k in $(seq 0 1 $(($M-2))); do
+        parMean=$(echo "${tPar[$(($j*($M - 1) + $k))]}  / $Iter" | bc -l)
         str="$str   $parMean"
     done
     echo $str >> $fDat
