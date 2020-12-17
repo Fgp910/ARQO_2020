@@ -7,8 +7,9 @@
 P=1
 Ninicio=$((512 * $P))
 Npaso=64
-Nfinal=$((1024 + 512 * $P))
-Iter=2
+#Nfinal=$((1024 + 512 * $P))
+Nfinal=1856
+Iter=3
 fDAT=mult.dat
 fTimePNG=mult_time.png
 fSpeedupPNG=mult_speedup.png
