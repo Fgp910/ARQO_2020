@@ -1,5 +1,5 @@
 /*********************************************************/
-/* Cálculo PI: Método de integración - Version OpenMP	 */
+/* Cï¿½lculo PI: Mï¿½todo de integraciï¿½n - Version OpenMP	 */
 /* false sharing 					 */
 /*********************************************************/
 
@@ -29,7 +29,8 @@ int main( int argc, char *argv[] )
 	fgets(buf, sizeof(buf), f);
 	pclose(f);
 	linesz = atoi(buf);
-	padsz = linesz / datasz;
+	// padsz = linesz / datasz;
+	padsz = 10;
 	printf("Cache line size: %d bytes => padding: %d elementos\n", linesz, padsz);
 	
 	// Solicitamos memoria para la suma de cada proceso

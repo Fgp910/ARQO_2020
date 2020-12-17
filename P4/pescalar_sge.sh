@@ -7,6 +7,6 @@
 #$ -pe openmp 4
 
 export PATH=$PATH:/share/apps/tools/valgrind/bin:/share/apps/tools/gnuplot/bin
-echo "Ejecutando timeSeriePar.sh"
+echo "Ejecutando time_serie_par.sh"
 echo ""
-source timeSeriePar.sh
+source time_serie_par.sh
