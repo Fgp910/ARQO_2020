@@ -8,7 +8,7 @@ P=1
 Ninicio=$((512 * $P))
 Npaso=64
 Nfinal=$((1024 + 512 * $P))
-Iter=3
+Iter=2
 fDAT=mult.dat
 fTimePNG=mult_time.png
 fSpeedupPNG=mult_speedup.png
@@ -24,27 +24,32 @@ echo "Running mult_serie and mult_par3..."
 #for N in $(seq $Ninicio $Npaso $Nfinal);
 unset serieTime
 unset parTime
+unset speedupAcum
+unset auxSerie
 for i in $(seq $Ninicio $Npaso $Nfinal); do serieTime+=(0); done
 for i in $(seq $Ninicio $Npaso $Nfinal); do parTime+=(0); done
+for i in $(seq $Ninicio $Npaso $Nfinal); do speedupAcum+=(1); done
+for i in $(seq $Ninicio $Npaso $Nfinal); do auxSerie+=(1); done
 export OMP_NUM_THREADS=4
 for ((i=1; i <= Iter; i++)); do
     echo "I: $i / $Iter..."
     for ((N=Ninicio, j=0; N <= Nfinal ; N+=Npaso, j++)); do
         echo -e "\tserie, N: $N / $Nfinal..."
-        aux=$(./../mult_serie $N | grep 'time' | awk '{print $3}')
-        serieTime[$j]=$(echo "${serieTime[$j]} + $aux" | bc)
+        auxSerie[$j]=$(./../mult_serie $N | grep 'time' | awk '{print $3}')
+        serieTime[$j]=$(echo "${serieTime[$j]} + ${auxSerie[$j]}" | bc)
     done
     for ((N=Ninicio, j=0; N <= Nfinal ; N+=Npaso, j++)); do
         echo -e "\tpar, N: $N / $Nfinal..."
         aux=$(./../mult_par3 $N | grep 'time' | awk '{print $3}')
         parTime[$j]=$(echo "${parTime[$j]} + $aux" | bc)
+        speedupAcum[$j]=$(echo "${speedupAcum[$j]} * ${auxSerie[$j]} / $aux" | bc -l)
     done
 done
 
 for ((N=Ninicio, j=0; N <= Nfinal ; N+=Npaso, j++)); do
     serieTimeMean=$(echo "${serieTime[$j]} / $Iter" | bc -l)
     parTimeMean=$(echo "${parTime[$j]} / $Iter" | bc -l)
-    speedup=$(echo "$serieTimeMean / $parTimeMean" | bc -l)
+    speedup=$(echo "e( l(${speedupAcum[$j]}) / $Iter )" | bc -l) #Media geométrica
     echo -e "$N\t $serieTimeMean\t $parTimeMean\t $speedup" >> $fDAT
 done
 
