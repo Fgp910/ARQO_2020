@@ -9,7 +9,7 @@ NPaso=1500000
 NFinal=10000000
 Iter=1
 fDat=timeSeriePar.dat
-fDat2=speedSeriePar.dat
+fDat2=speedupSeriePar.dat
 
 # Execution block
 unset tSerie
