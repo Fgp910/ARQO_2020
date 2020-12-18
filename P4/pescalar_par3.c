@@ -40,7 +40,7 @@ int main(int argc, char **argv)
     /* Bloque de computo */
     sum = 0;
 
-    #pragma omp parallel for reduction(+:sum)
+    #pragma omp parallel for reduction(+:sum) if(n>30000)
     for(k=0;k<n;k++)
     {
         sum = sum + A[k]*B[k];
