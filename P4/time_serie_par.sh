@@ -35,7 +35,7 @@ rm -rf $fDat $fDat2
 for ((j=0, N=$NInicio; N<=$NFinal; j+=1, N+=$NPaso)); do
     serieMean=$(echo "${tSerie[$j]}  / $Iter" | bc -l)
     str="$N    $serieMean"
-    str2="$N    "
+    str2="$N"
     for k in $(seq 1 1 $M); do
         parMean=$(echo "${tPar[$(($j*$M + ($k-1)))]}  / $Iter" | bc -l)
         str="$str   $parMean"
