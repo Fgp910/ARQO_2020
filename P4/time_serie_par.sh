@@ -57,15 +57,15 @@ set term png
 set key outside right center
 set output "pescalar.png"
 plot "$fDat" u 1:2  w l lw 2 lt rgb "#000000" title "Serial",     \
-     "$fDat" u 1:3  w l lw 2 lt rgb "#003f5c" title "2 threads",  \
-     "$fDat" u 1:4  w l lw 2 lt rgb "#58508d" title "4 threads",  \
-     "$fDat" u 1:5  w l lw 2 lt rgb "#bc5090" title "6 threads",  \
-     "$fDat" u 1:6  w l lw 2 lt rgb "#ff6361" title "8 threads",  \
-     "$fDat" u 1:7  w l lw 2 lt rgb "#ffa600" title "10 threads", \
-     "$fDat" u 1:8  w l lw 2 lt rgb "#ff582e" title "12 threads", \
-     "$fDat" u 1:9  w l lw 2 lt rgb "#ff0067" title "14 threads", \
-     "$fDat" u 1:10 w l lw 2 lt rgb "#dc00ab" title "16 threads", \
-     "$fDat" u 1:11 w l lw 2 lt rgb "#280eeb" title "18 threads"
+     "$fDat" u 1:3  w l lw 2 lt rgb "#003F5C" title "2 threads",  \
+     "$fDat" u 1:4  w l lw 2 lt rgb "#58508D" title "4 threads",  \
+     "$fDat" u 1:5  w l lw 2 lt rgb "#BC5090" title "6 threads",  \
+     "$fDat" u 1:6  w l lw 2 lt rgb "#FF6361" title "8 threads",  \
+     "$fDat" u 1:7  w l lw 2 lt rgb "#FFA600" title "10 threads", \
+     "$fDat" u 1:8  w l lw 2 lt rgb "#FF582E" title "12 threads", \
+     "$fDat" u 1:9  w l lw 2 lt rgb "#FF0067" title "14 threads", \
+     "$fDat" u 1:10 w l lw 2 lt rgb "#DC00AB" title "16 threads", \
+     "$fDat" u 1:11 w l lw 2 lt rgb "#280EEB" title "18 threads"
 replot
 quit
 END_GNUPLOT
@@ -77,15 +77,15 @@ set grid
 set term png
 set key outside right center
 set output "pescalar_speed.png"
-plot "$fDat2" u 1:2  w l lw 2 lt rgb "#003f5c" title "2 threads",  \
-     "$fDat2" u 1:3  w l lw 2 lt rgb "#58508d" title "4 threads",  \
-     "$fDat2" u 1:4  w l lw 2 lt rgb "#bc5090" title "6 threads",  \
-     "$fDat2" u 1:5  w l lw 2 lt rgb "#ff6361" title "8 threads",  \
-     "$fDat2" u 1:6  w l lw 2 lt rgb "#ffa600" title "10 threads", \
-     "$fDat2" u 1:7  w l lw 2 lt rgb "#ff582e" title "12 threads", \
-     "$fDat2" u 1:8  w l lw 2 lt rgb "#ff0067" title "14 threads", \
-     "$fDat2" u 1:9  w l lw 2 lt rgb "#dc00ab" title "16 threads", \
-     "$fDat2" u 1:10 w l lw 2 lt rgb "#280eeb" title "18 threads"
+plot "$fDat2" u 1:2  w l lw 2 lt rgb "#003F5C" title "2 threads",  \
+     "$fDat2" u 1:3  w l lw 2 lt rgb "#58508D" title "4 threads",  \
+     "$fDat2" u 1:4  w l lw 2 lt rgb "#BC5090" title "6 threads",  \
+     "$fDat2" u 1:5  w l lw 2 lt rgb "#FF6361" title "8 threads",  \
+     "$fDat2" u 1:6  w l lw 2 lt rgb "#FFA600" title "10 threads", \
+     "$fDat2" u 1:7  w l lw 2 lt rgb "#FF582E" title "12 threads", \
+     "$fDat2" u 1:8  w l lw 2 lt rgb "#FF0067" title "14 threads", \
+     "$fDat2" u 1:9  w l lw 2 lt rgb "#DC00AB" title "16 threads", \
+     "$fDat2" u 1:10 w l lw 2 lt rgb "#280EEB" title "18 threads"
 replot
 quit
 END_GNUPLOT
