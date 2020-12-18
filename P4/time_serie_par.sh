@@ -53,7 +53,7 @@ set title "Scalar Product Execution Time Depending on Number of Threads"
 set xlabel "Vector size"
 set ylabel "Time (s)"
 set grid
-set term png
+set term png size 960, 480
 set key outside right center
 set output "pescalar.png"
 plot "$fDat" u 1:2  w l lw 2 lt rgb "#000000" title "Serial",     \
@@ -74,7 +74,7 @@ set title "Scalar Product Speedup Depending on Number of Threads"
 set xlabel "Vector size"
 set ylabel "Speedup"
 set grid
-set term png
+set term png size 960, 480
 set key outside right center
 set output "pescalar_speed.png"
 plot "$fDat2" u 1:2  w l lw 2 lt rgb "#003F5C" title "2 threads",  \
