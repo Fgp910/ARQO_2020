@@ -9,6 +9,7 @@ NPaso=1500000
 NFinal=10000000
 Iter=1
 fDat=timeSeriePar.dat
+fDat2=speedSeriePar.dat
 
 # Execution block
 unset tSerie
@@ -30,15 +31,19 @@ for ((i=1; i<=$Iter; i++)); do
     done
 done
 
-rm -rf $fDat
+rm -rf $fDat $fDat2
 for ((j=0, N=$NInicio; N<=$NFinal; j+=1, N+=$NPaso)); do
     serieMean=$(echo "${tSerie[$j]}  / $Iter" | bc -l)
     str="$N    $serieMean"
+    str2="$N    "
     for k in $(seq 1 1 $M); do
         parMean=$(echo "${tPar[$(($j*$M + ($k-1)))]}  / $Iter" | bc -l)
         str="$str   $parMean"
+        speedup=$(echo "$serieMean / $parMean" | bc -l)
+        str2="$str2    $speedup"
     done
     echo $str >> $fDat
+    echo $str2 >> $fDat2
 done
 
 # Plot generation
@@ -47,20 +52,40 @@ gnuplot << END_GNUPLOT
 set title "Scalar Product Execution Time Depending on Number of Threads"
 set xlabel "Vector size"
 set ylabel "Time (s)"
-set grid 
+set grid
 set term png
 set key outside right center
 set output "pescalar.png"
-plot "$fDat" u 1:2 w l title "Serial", \
-     "$fDat" u 1:3 w l title "2 threads", \
-     "$fDat" u 1:4 w l title "4 threads", \
-     "$fDat" u 1:5 w l title "6 threads", \
-     "$fDat" u 1:6 w l title "8 threads", \
-     "$fDat" u 1:7 w l title "10 threads", \
-     "$fDat" u 1:8 w l title "12 threads", \
-     "$fDat" u 1:9 w l title "14 threads", \
-     "$fDat" u 1:10 w l title "16 threads", \
-     "$fDat" u 1:11 w l title "18 threads"
+plot "$fDat" u 1:2  w l lw 2 lt rgb "#000000" title "Serial",     \
+     "$fDat" u 1:3  w l lw 2 lt rgb "#003f5c" title "2 threads",  \
+     "$fDat" u 1:4  w l lw 2 lt rgb "#58508d" title "4 threads",  \
+     "$fDat" u 1:5  w l lw 2 lt rgb "#bc5090" title "6 threads",  \
+     "$fDat" u 1:6  w l lw 2 lt rgb "#ff6361" title "8 threads",  \
+     "$fDat" u 1:7  w l lw 2 lt rgb "#ffa600" title "10 threads", \
+     "$fDat" u 1:8  w l lw 2 lt rgb "#ff582e" title "12 threads", \
+     "$fDat" u 1:9  w l lw 2 lt rgb "#ff0067" title "14 threads", \
+     "$fDat" u 1:10 w l lw 2 lt rgb "#dc00ab" title "16 threads", \
+     "$fDat" u 1:11 w l lw 2 lt rgb "#280eeb" title "18 threads"
+replot
+quit
+END_GNUPLOT
+gnuplot << END_GNUPLOT
+set title "Scalar Product Speedup Depending on Number of Threads"
+set xlabel "Vector size"
+set ylabel "Speedup"
+set grid
+set term png
+set key outside right center
+set output "pescalar_speed.png"
+plot "$fDat2" u 1:2  w l lw 2 lt rgb "#003f5c" title "2 threads",  \
+     "$fDat2" u 1:3  w l lw 2 lt rgb "#58508d" title "4 threads",  \
+     "$fDat2" u 1:4  w l lw 2 lt rgb "#bc5090" title "6 threads",  \
+     "$fDat2" u 1:5  w l lw 2 lt rgb "#ff6361" title "8 threads",  \
+     "$fDat2" u 1:6  w l lw 2 lt rgb "#ffa600" title "10 threads", \
+     "$fDat2" u 1:7  w l lw 2 lt rgb "#ff582e" title "12 threads", \
+     "$fDat2" u 1:8  w l lw 2 lt rgb "#ff0067" title "14 threads", \
+     "$fDat2" u 1:9  w l lw 2 lt rgb "#dc00ab" title "16 threads", \
+     "$fDat2" u 1:10 w l lw 2 lt rgb "#280eeb" title "18 threads"
 replot
 quit
 END_GNUPLOT
